@@ -111,7 +111,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
 
     def agg_func_helper(s: pd.Series):
         """agg_func_helper"""
-    
+
         if s.name == "name_reg":
             return np.max(s)
         else:
