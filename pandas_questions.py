@@ -15,22 +15,15 @@ import os
 
 
 def find(name, path):
+    """
+    Find a file in a directory."""
     for root, dirs, files in os.walk(path):
         if name in files:
             return os.path.join(root, name)
 
 
 def load_data():
-    """
-    Find the index of a value in the given data.
-
-    Parameters:
-    - data: The data to search.
-    - value: The value to find in the data.
-
-    Returns:
-    - Index of the first occurrence of the value in the data.
-    """
+    '''Load data from the CSV files referundum/regions/departments.'''
     referendum_path = find("referendum.csv", "../")
     region_path = find("regions.csv", "../")
     department_path = find("departments.csv", "../")
