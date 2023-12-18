@@ -42,6 +42,9 @@ def merge_regions_and_departments(regions, departments):
 
 
 def add_0(string):
+    """Add a 0 before each department code if
+    its code is between 1 and 9
+    """
     if len(string) == 1:
         return "0" + string
     else:
@@ -90,7 +93,6 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
     geo_data = gpd.read_file('./data/regions.geojson')
     merge_geo_count = geo_data.merge(referendum_result_by_regions,
                                      left_on='code',
