@@ -71,7 +71,6 @@ def compute_referendum_result_by_regions(referendum_and_areas):
         'Choice B': 'sum'
     }).reset_index()
 
-    print(result_by_regions)
     return result_by_regions
 
 
