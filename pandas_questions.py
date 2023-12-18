@@ -18,7 +18,6 @@ def load_data():
     referendum = pd.read_csv("data/referendum.csv", sep=";")
     regions = pd.read_csv("data/regions.csv", sep=",")
     departments = pd.read_csv("data/departments.csv", sep=",")
-
     return referendum, regions, departments
 
 
@@ -44,7 +43,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
     def chgt(nom):
         if len(nom) == 1:
             return "0"+nom
@@ -63,7 +61,6 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    
     m = referendum_and_areas.loc[:, ["code_reg", "name_reg", "Registered", 
                                      "Abstentions", "Null", "Choice A",
                                      "Choice B"]].groupby(
