@@ -21,7 +21,16 @@ def find(name, path):
 
 
 def load_data():
-    """Load data from the CSV files referundum/regions/departments."""
+    """
+    Find the index of a value in the given data.
+
+    Parameters:
+    - data: The data to search.
+    - value: The value to find in the data.
+
+    Returns:
+    - Index of the first occurrence of the value in the data.
+    """
     referendum_path = find("referendum.csv", "../")
     region_path = find("regions.csv", "../")
     department_path = find("departments.csv", "../")
