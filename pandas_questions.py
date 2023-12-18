@@ -19,7 +19,6 @@ def load_data():
     departments = pd.read_csv("data//departments.csv", sep=",", header=0)
     regions = pd.read_csv("data//regions.csv", sep=",", header=0)
 
-
     return referendum, regions, departments
 
 
