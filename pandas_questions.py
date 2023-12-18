@@ -39,7 +39,11 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
 
-    return referendum.merge(regions_and_departments, left_on='Department code', right_on='code_dep')
+    referendum['Department code'] = referendum['Department code'].apply(lambda x: '0' + x if len(x) == 1 else x)
+    referendum = referendum[~referendum['Department code'].str.startswith('Z')]
+    regions_and_departments = regions_and_departments[regions_and_departments['code_dep'].str.len() <= 2]
+    tmp = referendum.merge(regions_and_departments, left_on='Department code', right_on='code_dep')
+    return tmp
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -68,7 +72,7 @@ def plot_referendum_map(referendum_result_by_regions):
     
     merged_data = referendum_result_by_regions.merge(geo_data, left_index=True, right_on='code')
     
-    merged_data['ratio'] = merged_data['Choice A'] / merged_data.shape[0]
+    merged_data['ratio'] = merged_data['Choice A'] / (merged_data['Choice A'] + merged_data['Choice B'])
 
     merged_data = gpd.GeoDataFrame(merged_data, geometry='geometry')
     # Plot the map
@@ -80,7 +84,7 @@ def plot_referendum_map(referendum_result_by_regions):
 
     # Show the plot
     plt.show()
-
+    print(merged_data[merged_data['name_reg']=='Normandie'])
     return merged_data
 
 
