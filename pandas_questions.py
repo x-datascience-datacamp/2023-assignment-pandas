@@ -28,8 +28,10 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
+    r = regions
+    d = departments
     df = pd.merge(
-        regions, departments, left_on="code", right_on="region_code", how="right"
+        r, d, left_on="code", right_on="region_code", how="right"
     )
     df = df[["region_code", "name_x", "code_y", "name_y"]]
     df = df.rename(
@@ -50,8 +52,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
-    regions_and_departments["code_dep"] = regions_and_departments["code_dep"].apply(
+    randd = regions_and_departments
+    regions_and_departments["code_dep"] = randd["code_dep"].apply(
         lambda x: x.lstrip("0")
     )
     referendum_new = referendum[
@@ -110,9 +112,10 @@ def plot_referendum_map(referendum_result_by_regions):
         geographic_results_by_regions["Choice A"]
         + geographic_results_by_regions["Choice B"]
     )
+    g = geographic_results_by_regions
 
     # we transform it into a geodataframe
-    geographic_results_by_regions = gpd.GeoDataFrame(geographic_results_by_regions)
+    geographic_results_by_regions = gpd.GeoDataFrame(g)
 
     # now, we plot the result
     geographic_results_by_regions.plot(column="ratio")
@@ -126,7 +129,8 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
+    r = referendum_and_areas
+    referendum_results = compute_referendum_result_by_regions(r)
     print(referendum_results)
 
     plot_referendum_map(referendum_results)
