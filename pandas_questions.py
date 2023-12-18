@@ -27,7 +27,6 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     dep = departments.set_index('id')
     dep = dep.rename(columns={'code': 'code_dep',
                               'region_code': 'code_reg',
@@ -77,7 +76,6 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
     gpd_regions = gpd.read_file('./data/regions.geojson')
     gpd_regions = gpd_regions.rename(columns={'code': 'code_reg'})
     gpd_regions = gpd_regions.drop(columns=['nom'])
