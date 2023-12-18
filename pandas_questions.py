@@ -15,13 +15,10 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.read_csv(
-        "C:/Users/Lucas/Datacamp/2023-assignment-pandas/data/referendum.csv",
-        sep=";")
-    regions = pd.read_csv(
-        "C:/Users/Lucas/Datacamp/2023-assignment-pandas/data/regions.csv")
-    departments = pd.read_csv(
-        "C:/Users/Lucas/Datacamp/2023-assignment-pandas/data/departments.csv")
+    referendum = pd.read_csv("data//referendum.csv", sep=";", header=0)
+    departments = pd.read_csv("data//departments.csv", sep=",", header=0)
+    regions = pd.read_csv("data//regions.csv", sep=",", header=0)
+
 
     return referendum, regions, departments
 
