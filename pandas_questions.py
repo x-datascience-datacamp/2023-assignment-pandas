@@ -90,7 +90,8 @@ def plot_referendum_map(referendum_result_by_regions):
             )
     merged_data['ratio'] = merged_data['Choice A'] / (
         merged_data['Choice A']
-        + merged_data['Choice B'])
+        + merged_data['Choice B']
+        )
     merged_data.plot(column='ratio', cmap='coolwarm', legend=True)
 
     return merged_data
