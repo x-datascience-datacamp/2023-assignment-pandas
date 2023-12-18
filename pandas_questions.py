@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.DataFrame(pd.read_csv('./referendum.csv', delimiter=';'))
-    regions = pd.DataFrame(pd.read_csv('./regions.csv', delimiter=','))
-    departments = pd.DataFrame(pd.read_csv('./departments.csv', delimiter=','))
+    df_reg = pd.DataFrame(pd.read_csv('./regions.csv', delimiter=','))
+    df_dep = pd.DataFrame(pd.read_csv('./departments.csv', delimiter=','))
 
     return referendum, df_reg, df_dep
 
@@ -93,7 +93,8 @@ def plot_referendum_map(referendum_result_by_regions):
     geo_data = gpd.read_file('regions.geojson')
 
     # Fusionner les informations géographiques avec les résultats du référendum
-    merged_data = pd.merge(geo_data, referendum_result_by_regions, left_on='code', right_on='code_reg', how='inner')
+    merged_data = pd.merge(geo_data, referendum_result_by_regions,
+                           left_on='code', right_on='code_reg', how='inner')
 
     # Calculer le taux de 'Choice A' sur tous les bulletins exprimés
     merged_data['ratio'] = merged_data['Choice A'] / merged_data['Registered']
