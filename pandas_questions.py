@@ -23,7 +23,7 @@ def find(name, path):
 
 
 def load_data():
-    '''Load data from the CSV files referundum/regions/departments.'''
+    """Load data from the CSV files referundum/regions/departments."""
     referendum_path = find("referendum.csv", "../")
     region_path = find("regions.csv", "../")
     department_path = find("departments.csv", "../")
