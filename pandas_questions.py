@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.read_csv('data/referendum.csv')
+    referendum = pd.read_csv('data/referendum.csv', sep=';')
     regions = pd.read_csv('data/regions.csv')
     departments = pd.read_csv('data/departments.csv')
 
@@ -39,7 +39,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
 
-    return pd.DataFrame({})
+    return referendum.merge(regions_and_departments, left_on='Department code', right_on='code_dep')
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -49,7 +49,9 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    return pd.DataFrame({})
+    tmp = referendum_and_areas.groupby(['code_reg', 'name_reg'], as_index=False)[['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']].sum()
+    tmp.set_index('code_reg', inplace=True)
+    return tmp
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -62,7 +64,24 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
 
-    return gpd.GeoDataFrame({})
+    geo_data = gpd.read_file('data/regions.geojson')
+    
+    merged_data = referendum_result_by_regions.merge(geo_data, left_index=True, right_on='code')
+    
+    merged_data['ratio'] = merged_data['Choice A'] / merged_data.shape[0]
+
+    merged_data = gpd.GeoDataFrame(merged_data, geometry='geometry')
+    # Plot the map
+    ax = merged_data.plot(column='ratio', legend=True)
+    
+    # Customize plot
+    ax.set_axis_off()
+    ax.set_title('Referendum Results by Region')
+
+    # Show the plot
+    plt.show()
+
+    return merged_data
 
 
 if __name__ == "__main__":
