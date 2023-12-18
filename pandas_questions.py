@@ -39,10 +39,14 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    regions_and_departments.replace(['01', '02', '03', '04',
+                                    '05', '06', '07', '08', '09'],
+                                    ['1', '2', '3', '4', '5', '6',
+                                    '7', '8', '9'], inplace=True)
     referendum_and_areas = referendum.merge(regions_and_departments,
                                             left_on='Department code',
                                             right_on='code_dep', suffixes="")
-    referendum_and_areas.drop(columns=['code_dep'], inplace=True)
+    # referendum_and_areas.drop(columns=['code_dep'], inplace=True)
     return referendum_and_areas
 
 
@@ -86,7 +90,7 @@ def plot_referendum_map(referendum_result_by_regions):
     )
     referendum_results['ratio'] = (
         referendum_results['Choice A'] /
-        (referendum_results['Registered'] - referendum_results['Abstentions'])
+        (referendum_results['Choice A'] + referendum_results['Choice B'])
     )
     plt.figure()
     referendum_results.plot(
