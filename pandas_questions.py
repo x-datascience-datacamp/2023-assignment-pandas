@@ -8,39 +8,52 @@ https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/e
 To do that, you will load the data as pandas.DataFrame, merge the info and
 aggregate them by regions and finally plot them on a map using `geopandas`.
 """
+
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 
 
-
 def load_data():
-    """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
+    """Load data from the CSV files referendum/regions/departments."""
+    # Assuming you have CSV files named 'referendum.csv', 'regions.csv', and 'departments.csv'
+    referendum = pd.read_csv('data/referendum.csv', delimiter=";")
+    regions = pd.read_csv('data/regions.csv', delimiter=",")
+    departments = pd.read_csv('data/departments.csv', delimiter=",")
 
     return referendum, regions, departments
 
 
 def merge_regions_and_departments(regions, departments):
-    """Merge regions and departments in one DataFrame.
+
+    """
+    Merge regions and departments in one DataFrame.
 
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
 
-    return pd.DataFrame({})
+    merged_df = pd.merge(regions[['code','name']], departments[['region_code','code', 'name']],
+         left_on='code', right_on='region_code', how='left')
+    merged_df = merged_df.drop(columns=['region_code'])
+    merged_df = merged_df.rename(columns={'code_x': 'code_reg','name_x':'name_reg','code_y': 'code_dep','name_y':'name_dep'})
+    merged_df['code_dep'] = merged_df['code_dep'].str.lstrip('0')
+
+    return merged_df
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
-
+    
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    merged_df_2 = pd.merge(referendum, regions_and_departments,
+         left_on='Department code', right_on='code_dep', how='left')
 
-    return pd.DataFrame({})
+    delete_row = merged_df_2[merged_df_2["Department code"].str.startswith('Z')].index
+    merged_df_2 = merged_df_2.drop(delete_row)
+    return merged_df_2
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
