@@ -60,8 +60,6 @@ def test_merge_referendum_and_area():
         "Check for mismatch in column formats."
     )
 
-    
-
 
 def test_compute_referendum_result_by_regions():
     referendum, df_reg, df_dep = load_data()
