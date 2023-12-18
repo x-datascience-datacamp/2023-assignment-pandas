@@ -16,9 +16,9 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
 
-    referendum = pd.read_csv("2023-assignment-pandas/data/referendum.csv", sep=";")
-    regions = pd.read_csv("2023-assignment-pandas/data/regions.csv")
-    departments = pd.read_csv("2023-assignment-pandas/data/departments.csv")
+    referendum = pd.read_csv("data/referendum.csv", sep=";")
+    regions = pd.read_csv("data/regions.csv")
+    departments = pd.read_csv("data/departments.csv")
 
     return referendum, regions, departments
 
@@ -85,7 +85,7 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-    regions = gpd.read_file("2023-assignment-pandas/data/regions.geojson")
+    regions = gpd.read_file("data/regions.geojson")
     referendum_result_by_regions = regions.merge(
         referendum_result_by_regions,
         left_on="nom",
