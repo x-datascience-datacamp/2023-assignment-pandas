@@ -49,6 +49,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
     referendum = referendum[referendum["Department code"].str.contains("Z") == False].copy()
+    referendum['Department code'] = referendum['Department code'].str.zfill(2)
     referendum_and_areas = referendum.merge(
         regions_and_departments, 
         how="left",
@@ -65,11 +66,10 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
     col = ['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
-    referendum_results = referendum_and_areas.groupby(['code_reg'])[col].sum()
-    referendum_results.index.names = ['name_reg']
+    referendum_results = referendum_and_areas.groupby(['name_reg'])[col].agg('sum')
     referendum_results.reset_index(inplace=True)
     return referendum_results
-
+    
 
 def plot_referendum_map(referendum_result_by_regions):
     """Plot a map with the results from the referendum.
@@ -80,15 +80,18 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-    regions = gpd.read_file('data/regions.geojson')
-    regions = regions[['code', 'geometry']]
-    regions.columns = ['name_reg', 'geometry']
-    referendum_result_by_regions = pd.merge(referendum_result_by_regions, regions, on='name_reg')
-    referendum_result_by_regions['ratio'] = referendum_result_by_regions['Choice A'] / (referendum_result_by_regions['Choice A'] + referendum_result_by_regions['Choice B'])
-    referendum_result_by_regions = gpd.GeoDataFrame(referendum_result_by_regions)
-    referendum_result_by_regions.plot(column='ratio', legend=True)
-    
-    return gpd.GeoDataFrame(referendum_result_by_regions)
+    regions = gpd.read_file("data/regions.geojson")
+    referendum_result_by_regions = regions.merge(
+        referendum_result_by_regions,
+        left_on="nom",
+        right_on="name_reg"
+    )
+    referendum_result_by_regions[
+        "ratio"] = referendum_result_by_regions["Choice A"] \
+        / (referendum_result_by_regions["Choice A"]
+           + referendum_result_by_regions["Choice B"])
+    referendum_result_by_regions.plot(column="ratio", legend=True)
+    return referendum_result_by_regions
 
 
 if __name__ == "__main__":
@@ -101,7 +104,6 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    print(referendum_and_areas.shape)
     referendum_results = compute_referendum_result_by_regions(
         referendum_and_areas
     )
