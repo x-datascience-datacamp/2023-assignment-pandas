@@ -42,13 +42,21 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    regions_and_departments[
+        ~regions_and_departments['code_reg'].str.contains("COM")
+    ]
+    regions_and_departments['code_dep'] = (
+        regions_and_departments['code_dep'].apply(
+            lambda x: x[1:] if x[0] == '0' else x
+            )
+    )
     merged = referendum.merge(
         regions_and_departments,
         how='inner',
         left_on='Department code',
         right_on='code_dep'
     )
-    return merged.drop(['Department code', 'Department name'], axis=1)
+    return merged
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -57,9 +65,14 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    grouped = referendum_and_areas.groupby(['code_reg'])[
+    # Group by both 'code_reg' and 'name_reg'
+    grouped = referendum_and_areas.groupby(['code_reg', 'name_reg'])[
         ["Registered", "Abstentions", "Null", "Choice A", "Choice B"]].sum()
-    return grouped
+
+    # Reset the index so 'code_reg' and 'name_reg' become columns
+    grouped_reset = grouped.reset_index()
+
+    return grouped_reset
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -77,10 +90,9 @@ def plot_referendum_map(referendum_result_by_regions):
         left_on='code',
         right_on='code_reg'
     )
-    merged['ratio'] = merged['Choice A'] / (
-        merged['Choice A'] + merged['Choice B'] +
-        merged['Null'] + merged['Abstentions']
-        )
+    merged['ratio'] = (
+        merged['Choice A'] / (merged['Choice A'] + merged['Choice B'])
+    )
     merged.plot(column='ratio', legend=True)
     return merged
 
