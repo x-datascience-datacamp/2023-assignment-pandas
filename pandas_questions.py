@@ -39,7 +39,9 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
 
-    referendum['Department code'] = referendum['Department code'].apply(lambda x: '0' + x if len(x) == 1 else x)
+    referendum['Department code'] = referendum['Department code'].apply(
+    lambda x: '0' + x if len(x) == 1 else x
+    )
     referendum = referendum[~referendum['Department code'].str.startswith('Z')]
     regions_and_departments = regions_and_departments[regions_and_departments['code_dep'].str.len() <= 2]
     tmp = referendum.merge(regions_and_departments, left_on='Department code', right_on='code_dep')
