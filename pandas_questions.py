@@ -42,8 +42,9 @@ def merge_regions_and_departments(regions, departments):
 
 
 def add_0(string):
-    """Add a 0 before each department code if
-    its code is between 1 and 9
+    """Add a 0 before each department code.
+    
+    Ex: 1 becomes 01
     """
     if len(string) == 1:
         return "0" + string
