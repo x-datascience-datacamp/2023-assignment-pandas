@@ -28,10 +28,10 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    reg = regions.rename({"code": "code_reg", "name": "name_reg"})
-    dep = departments.rename({"code": "code_dep",
-                              "region_code": "code_reg",
-                              "name": "name_dep"})
+    reg = regions.rename(columns={"code": "code_reg", "name": "name_reg"})
+    dep = departments.rename(columns={"code": "code_dep",
+                                      "region_code": "code_reg",
+                                      "name": "name_dep"})
     df = pd.merge(reg[['code_reg', 'name_reg']],
                   dep[['code_reg', 'code_dep', 'name_dep']],
                   on='code_reg', how='inner')
