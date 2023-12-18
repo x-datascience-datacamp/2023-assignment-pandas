@@ -70,7 +70,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
         ["Registered", "Abstentions", "Null", "Choice A", "Choice B"]].sum()
 
     # Reset the index so 'code_reg' and 'name_reg' become columns
-    grouped_reset = grouped.reset_index()
+    grouped_reset = grouped.reset_index().set_index('code_reg')
 
     return grouped_reset
 
