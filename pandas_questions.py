@@ -48,9 +48,14 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    referendum = pd.merge(referendum, regions_and_departments, left_on='Department code', right_on='code_dep')
-    referendum = referendum[referendum['code_reg'] != 'COM']
-    return referendum
+    referendum = referendum[referendum["Department code"].str.contains("Z") == False].copy()
+    referendum_and_areas = referendum.merge(
+        regions_and_departments, 
+        how="left",
+        left_on="Department code", 
+        right_on="code_dep"
+    )
+    return referendum_and_areas
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -59,7 +64,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    referendum_results = referendum_and_areas.groupby(['code_reg'])[['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']].sum()
+    col = ['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
+    referendum_results = referendum_and_areas.groupby(['code_reg'])[col].sum()
     referendum_results.index.names = ['name_reg']
     referendum_results.reset_index(inplace=True)
     return referendum_results
@@ -95,10 +101,10 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
+    print(referendum_and_areas.shape)
     referendum_results = compute_referendum_result_by_regions(
         referendum_and_areas
     )
-    print(referendum_results["Registered"].sum())
 
     plot_referendum_map(referendum_results)
     plt.show()
