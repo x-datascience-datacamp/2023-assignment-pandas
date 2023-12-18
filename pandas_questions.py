@@ -15,21 +15,41 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
+    referendum = pd.read_csv("data/referendum.csv", sep=";")
+    regions = pd.read_csv("data/regions.csv")
+    departments = pd.read_csv("data/departments.csv")
 
     return referendum, regions, departments
 
 
 def merge_regions_and_departments(regions, departments):
     """Merge regions and departments in one DataFrame.
-
+    
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
+    regions_and_departments = pd.merge(  # Inner join by default
+        left=regions,
+        right=departments,
+        left_on="code",
+        right_on="region_code",
+    )
 
-    return pd.DataFrame({})
+    regions_and_departments.drop(  # Drop unwanted columns
+        columns=["id_x", "id_y", "slug_x", "region_code", "slug_y"],
+        inplace=True,
+    )
+    regions_and_departments.rename(  # Used wanted column names
+        columns={
+            "code_x": "code_reg",
+            "name_x": "name_reg",
+            "code_y": "code_dep",
+            "name_y": "name_dep",
+        },
+        inplace=True,
+    )
+
+    return regions_and_departments
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -38,6 +58,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    referendum_and_areas = pd.merge
+
 
     return pd.DataFrame({})
 
