@@ -32,13 +32,13 @@ def merge_regions_and_departments(regions, departments):
         regions.rename(columns={"name": "name_reg", "code": "code_reg"})[[
             "name_reg", "code_reg"
             ]],
-        how='left', 
+        how='left',
         left_on='region_code',
         right_on='code_reg').rename(
             columns={"name": "name_dep", "code": "code_dep"}
             ).drop(
                 columns=["slug", "id", "region_code"])
- 
+
     return regions_and_departments
 
 
@@ -52,11 +52,11 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
         ele.lstrip("0") for ele in regions_and_departments['code_dep']]
 
     referendum_merged = referendum.merge(
-        regions_and_departments, 
-        how='left', 
+        regions_and_departments,
+        how='left',
         left_on='Department code',
         right_on='code_dep')
-    
+
     dom_tom_list = [
         'ZA', 'ZB', 'ZC', 'ZD',
         'ZM', 'ZN', 'ZP', 'ZS',
@@ -112,7 +112,7 @@ def plot_referendum_map(referendum_result_by_regions):
 if __name__ == "__main__":
 
     referendum, df_reg, df_dep = load_data()
-    
+
     regions_and_departments = merge_regions_and_departments(
         df_reg, df_dep
     )
@@ -126,4 +126,3 @@ if __name__ == "__main__":
 
     plot_referendum_map(referendum_results)
     plt.show()
-    
