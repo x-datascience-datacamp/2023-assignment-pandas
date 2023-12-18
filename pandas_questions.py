@@ -73,7 +73,6 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-
     df = referendum_and_areas.copy()
 
     list_of_columns = ['Registered',
@@ -89,7 +88,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
 
 
 def plot_referendum_map(referendum_result_by_regions):
-    """Plot a map with the results from the referendum.
+    """Plot a map with the results from the referendum.p
 
     * Load the geographic data with geopandas from `regions.geojson`.
     * Merge these info into `referendum_result_by_regions`.
@@ -97,7 +96,6 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
     regions_geo = gpd.read_file('data/regions.geojson')
 
     df = pd.merge(regions_geo,
