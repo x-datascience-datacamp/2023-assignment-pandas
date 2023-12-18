@@ -12,6 +12,7 @@ import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
 
+ #sdthrwt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
