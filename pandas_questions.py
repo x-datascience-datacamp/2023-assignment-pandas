@@ -46,7 +46,6 @@ def add_0(string):
 
     Ex: 1 becomes 01.
     """
-
     if len(string) == 1:
         return "0" + string
     else:
