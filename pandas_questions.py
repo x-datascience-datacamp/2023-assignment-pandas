@@ -18,6 +18,7 @@ def load_data():
     referendum = pd.DataFrame({})
     regions = pd.DataFrame({})
     departments = pd.DataFrame({})
+    #changes
 
     return referendum, regions, departments
 
