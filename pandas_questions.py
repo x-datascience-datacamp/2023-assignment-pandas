@@ -38,7 +38,7 @@ def merge_regions_and_departments(regions, departments):
     )
 
     merged_df = merged_df.drop(columns=['region_code'])
-    merged_df.columns = ['code_reg', 'name_reg', 'code_dep', 'name_dep'] 
+    merged_df.columns = ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     return merged_df
 
 
@@ -48,12 +48,14 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    referendum = referendum[referendum["Department code"].str.contains("Z") == False].copy()
+    referendum = referendum[
+        ~referendum["Department code"].str.contains("Z")
+    ].copy()
     referendum['Department code'] = referendum['Department code'].str.zfill(2)
     referendum_and_areas = referendum.merge(
-        regions_and_departments, 
+        regions_and_departments,
         how="left",
-        left_on="Department code", 
+        left_on="Department code",
         right_on="code_dep"
     )
     return referendum_and_areas
@@ -66,10 +68,11 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
     col = ['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
-    referendum_results = referendum_and_areas.groupby(['name_reg'])[col].agg('sum')
+    referendum_results = referendum_and_areas.groupby(['name_reg'])[col] \
+        .agg('sum')
     referendum_results.reset_index(inplace=True)
     return referendum_results
-    
+
 
 def plot_referendum_map(referendum_result_by_regions):
     """Plot a map with the results from the referendum.
