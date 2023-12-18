@@ -95,6 +95,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
+    
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
@@ -109,6 +110,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ]
 
     def agg_func_helper(s: pd.Series):
+        """agg_func_helper"""
+        
         if s.name == "name_reg":
             return np.max(s)
         else:
