@@ -48,14 +48,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    referendum = referendum[referendum["Department code"].str.contains("Z") == False].copy()
-    referendum_and_areas = referendum.merge(
-        regions_and_departments,
-        how='left',
-        left_on='Department code',
-        right_on='code_dep',
-    )
-    return referendum_and_areas
+    referendum = pd.merge(referendum, regions_and_departments, left_on='Department code', right_on='code_dep')
+    referendum = referendum[referendum['code_reg'] != 'COM']
+    return referendum
+
 
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
@@ -102,6 +98,7 @@ if __name__ == "__main__":
     referendum_results = compute_referendum_result_by_regions(
         referendum_and_areas
     )
+    print(referendum_results["Registered"].sum())
 
     plot_referendum_map(referendum_results)
     plt.show()
