@@ -39,7 +39,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    regions_and_departments['code_dep2'] = regions_and_departments['code_dep'].str.replace('^0','') # create new code dep without 0
+    regions_and_departments['code_dep2'] = regions_and_departments['code_dep'].str.replace('^0','', regex=True) # create new code dep without 0
     base_refendum = pd.merge(regions_and_departments, referendum, how='inner', left_on='code_dep2', right_on='Department code')
     base_refendum2 = base_refendum.drop('code_dep2', axis=1) # Drop column code_dep2
     return base_refendum2
@@ -80,6 +80,7 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
+    print(referendum_and_areas.shape)
     referendum_results = compute_referendum_result_by_regions(
         referendum_and_areas
     )
