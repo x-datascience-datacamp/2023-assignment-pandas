@@ -15,21 +15,45 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
+    referendum = pd.read_csv('./data/referendum.csv', sep=';')
+    regions = pd.read_csv('./data/regions.csv', sep=',')
+    departments = pd.read_csv('./data/departments.csv', sep=',')
 
     return referendum, regions, departments
 
 
 def merge_regions_and_departments(regions, departments):
     """Merge regions and departments in one DataFrame.
-
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
 
-    return pd.DataFrame({})
+    merge = pd.merge(
+        left=regions,
+        right=departments,
+        how='inner',
+        left_on='code',
+        right_on='region_code'
+    )
+
+    merge.drop(
+        columns=['slug_x', 'slug_y', 'code_x', 'id_x', 'id_y'],
+        inplace=True
+    )
+
+    cols_to_change = {
+        'name_x': 'name_reg',
+        'region_code': 'code_reg',
+        'name_y': 'name_dep',
+        'code_y': 'code_dep'
+    }
+
+    merge.rename(
+        columns=cols_to_change,
+        inplace=True
+        )
+
+    return merge
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -39,7 +63,17 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
 
-    return pd.DataFrame({})
+    referendum['Department code'] = referendum['Department code'].apply(
+        lambda x: '0' + x if len(x) == 1 else x
+        )
+
+    return pd.merge(
+        left=referendum,
+        right=regions_and_departments,
+        how='inner',
+        left_on='Department code',
+        right_on='code_dep'
+        )
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -49,7 +83,25 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    return pd.DataFrame({})
+    referendum_results = referendum_and_areas[['name_reg',
+                                               'Registered',
+                                               'Abstentions',
+                                               'Null',
+                                               'Choice A',
+                                               'Choice B',
+                                               'code_reg']].copy()
+
+    referendum_results = referendum_results.groupby(
+        ['code_reg', 'name_reg'],
+        as_index=False
+        ).sum()
+
+    referendum_results.set_index(
+        'code_reg',
+        inplace=True
+        )
+
+    return referendum_results
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -62,7 +114,50 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
 
-    return gpd.GeoDataFrame({})
+    geo_data = gpd.read_file("./data/regions.geojson")
+    referendum_result_by_regions = geo_data.merge(
+        referendum_result_by_regions,
+        left_on='code',
+        right_index=True
+        )
+
+    referendum_result_by_regions.set_index(
+        'code',
+        inplace=True
+        )
+
+    referendum_result_by_regions['ratio'] = (
+        referendum_result_by_regions['Choice A'] /
+        (referendum_result_by_regions['Choice A'] +
+         referendum_result_by_regions['Choice B'])
+        )
+
+    fig, ax = plt.subplots(1, 1, figsize=(12, 8))
+
+    referendum_result_by_regions.plot(
+        column='ratio',
+        cmap='coolwarm',
+        linewidth=0.8,
+        ax=ax,
+        edgecolor='0.8',
+        legend=True
+        )
+
+    ax.set_title(
+        "Referendum Results: Choice A / All Expressed Ballots"
+        )
+
+    ax.set_axis_off()
+    plt.show()
+    result_with_ratio = referendum_result_by_regions[
+        ['name_reg',
+         'ratio']
+         ]
+
+    return gpd.GeoDataFrame(
+        result_with_ratio,
+        geometry=referendum_result_by_regions.geometry
+        )
 
 
 if __name__ == "__main__":
