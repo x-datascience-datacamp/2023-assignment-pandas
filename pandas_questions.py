@@ -18,7 +18,6 @@ def load_data():
     referendum = pd.read_csv("data/referendum.csv", sep=";")
     regions = pd.read_csv("data/regions.csv")
     departments = pd.read_csv("data/departments.csv")
-
     return referendum, regions, departments
 
 
@@ -28,7 +27,6 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     output = regions.merge(
         departments,
         left_on="code",
@@ -87,9 +85,7 @@ def plot_referendum_map(referendum_result_by_regions):
     output = pd.merge(
         referendum_result_by_regions, gdf, left_on="name_reg", right_on="nom"
     )
-    output["ratio"] = output["Choice A"] / (
-        output["Choice A"] + output["Choice B"]
-    )
+    output["ratio"] = output["Choice A"] / (output["Choice A"] + output["Choice B"])
     # output.plot(column="ratio")
     output = gpd.GeoDataFrame(output, geometry="geometry")
     return output
@@ -101,9 +97,7 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(
-        referendum_and_areas
-    )
+    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
     print(referendum_results)
 
     plot_referendum_map(referendum_results)
