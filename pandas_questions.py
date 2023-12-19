@@ -100,7 +100,7 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     # Charger les données géographiques depuis le fichier GeoJSON
-    geo_data = gpd.read_file('regions.geojson')
+    geo_data = gpd.read_file('data/regions.geojson')
 
     # Fusionner les informations géographiques avec les résultats du référendum
     merged_data = pd.merge(geo_data, referendum_result_by_regions,
