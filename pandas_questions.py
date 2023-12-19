@@ -73,13 +73,14 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     referendum_result = (
         referendum_and_areas.groupby('code_reg').agg({
             'name_reg': 'first',
-            'Registered': 'sum', 'Abstentions': 'sum', 'Null': 'sum',
-            'Choice A': 'sum', 'Choice B': 'sum'
+            'Registered': 'sum',
+            'Abstentions': 'sum',
+            'Null': 'sum',
+            'Choice A': 'sum',
+            'Choice B': 'sum'
         })
     )
     return referendum_result
-
-
 
 
 def plot_referendum_map(referendum_result_by_regions):
