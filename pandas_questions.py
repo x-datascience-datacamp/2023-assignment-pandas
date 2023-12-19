@@ -7,7 +7,7 @@ https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/e
 
 To do that, you will load the data as pandas.DataFrame, merge the info and
 aggregate them by regions and finally plot them on a map using `geopandas`.
-# """
+"""
 import pandas as pd
 import geopandas as gpd
 import matplotlib.pyplot as plt
@@ -34,7 +34,8 @@ def merge_regions_and_departments(regions, departments):
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
-    """Merge referendum and regions_and_departments in one DataFrame.
+    """
+    Merge referendum and regions_and_departments in one DataFrame.
 
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad, which all have a code that contains `Z`.
