@@ -26,8 +26,9 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    merged_df = pd.merge(departments, regions,left_on='region_code',right_on='code',suffixes=('_dep', '_reg'))
-    return merged_df[['code_reg','name_reg','code_dep','name_dep']]
+    merged_df = pd.merge(departments, regions, left_on='region_code', right_on='code', 
+                         suffixes=('_dep', '_reg'))
+    return merged_df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
 
 
 def merge_referendum_and_areas(referendum,regions_and_departments):
@@ -37,7 +38,8 @@ def merge_referendum_and_areas(referendum,regions_and_departments):
     french living abroad.
     """
     regions_and_departments["code_dep"] = regions_and_departments["code_dep"].str.lstrip("0")
-    merged_df = pd.merge(referendum,regions_and_departments,left_on='Department code',right_on='code_dep')
+    merged_df = pd.merge(referendum, regions_and_departments, left_on='Department code', 
+                         right_on='code_dep')
     mask = merged_df["Department name"].isin(
         [
             "GUADELOUPE",
@@ -66,7 +68,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     """
     referendum_result = (
         referendum_and_areas.groupby('code_reg').agg({
-        'name_reg':'first','Registered':'sum','Abstentions':'sum','Null':'sum','Choice A':'sum','Choice B': 'sum'}))
+        'name_reg': 'first', 'Registered': 'sum', 'Abstentions':'sum', 'Null': 'sum', 'Choice A': 'sum', 'Choice B': 'sum'}))
     return referendum_result
 
 
