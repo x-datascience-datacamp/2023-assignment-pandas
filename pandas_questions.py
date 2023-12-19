@@ -55,7 +55,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
         ]
     )
     merged_df = merged_df.loc[~mask]
-
     merged_df.dropna(inplace=True)
     return merged_df
 
@@ -95,14 +94,8 @@ def plot_referendum_map(referendum_result_by_regions):
         left_on="code",
         right_index=True,
     )
-    geo_data ["expressed"] = (
-        geo_data ["Choice A"] + geo_data ["Choice B"]
-    )
-
-    geo_data ["ratio"] = (
-        geo_data ["Choice A"] / geo_data ["expressed"]
-    )
-
+    geo_data ["expressed"] = (geo_data ["Choice A"] + geo_data ["Choice B"])
+    geo_data ["ratio"] = (geo_data ["Choice A"] / geo_data ["expressed"])
     f, ax = plt.subplots()
     geo_data .plot(
         "ratio",
@@ -111,7 +104,6 @@ def plot_referendum_map(referendum_result_by_regions):
         cmap="OrRd",
     )
     f.suptitle("Ratio of Choice A over all expressed ballots")
-
     return geo_data 
 
 
