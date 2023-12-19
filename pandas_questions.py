@@ -30,7 +30,6 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     regions_and_departments = pd.merge(
         departments,
         regions,
