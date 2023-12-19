@@ -47,7 +47,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     print(referendum.shape)
     referendum_drop = referendum[~mask]
     m2 = referendum_drop['Department code'].apply(lambda x: x.zfill(2))
-    # comment 
     referendum_drop.loc[:, 'Department code'] = m2
     print(referendum_drop.shape)
     merged_df = pd.merge(referendum_drop, regions_and_departments,
