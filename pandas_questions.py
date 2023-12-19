@@ -30,9 +30,7 @@ def merge_regions_and_departments(regions, departments):
     """
     merged = pd.merge(regions, departments, left_on='code', right_on='region_code', suffixes=('_reg', '_dep'))
 
-    final_df = merged[['code', 'name_reg', 'code_dep', 'name_dep']].rename(columns={'code': 'code_reg'})
-
-    return final_df
+    return merged[['code_reg','name_reg','code_dep','name_dep']]
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -113,6 +111,7 @@ def plot_referendum_map(referendum_result_by_regions):
         cmap="OrRd",
     )
     f.suptitle("Ratio of Choice A over all expressed ballots")
+    return geo_data 
 
 
 if __name__ == "__main__":
