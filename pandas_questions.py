@@ -42,8 +42,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
-    return pd.DataFrame({})
+    mask = ~referendum['Department code'].str.contains('Z')
+    referendum['Department code'] = referendum['Department code'].str.zfill(2)
+    return pd.merge(referendum.loc[mask, :], regions_and_departments,
+                    left_on='Department code', right_on='code_dep')
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
