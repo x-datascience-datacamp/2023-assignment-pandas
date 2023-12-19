@@ -42,8 +42,12 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
     regions_and_departments["code_dep"] = regions_and_departments["code_dep"].str.lstrip("0")
-    merged_df = pd.merge(referendum, regions_and_departments, left_on='Department code', 
-                         right_on='code_dep')
+    merged_df = pd.merge(
+    referendum, 
+    regions_and_departments, 
+    left_on='Department code', 
+    right_on='code_dep'
+    )
     mask = merged_df["Department name"].isin(
         [
             "GUADELOUPE",
@@ -82,7 +86,7 @@ def plot_referendum_map(referendum_result_by_regions):
     * Load the geographic data with geopandas from `regions.geojson`.
     * Merge these info into `referendum_result_by_regions`.
     * Use the method `GeoDataFrame.plot` to display the result map. The results
-      should display the rate of 'Choice A' over all expressed ballots.
+    should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     geo_data = gpd.read_file('data/regions.geojson') 
@@ -95,10 +99,10 @@ def plot_referendum_map(referendum_result_by_regions):
     geo_data["ratio"] = (geo_data["Choice A"] / geo_data["expressed"])
     f, ax = plt.subplots()
     geo_data .plot(
-        "ratio",
-        ax=ax,
-        legend=True,
-        cmap="OrRd",
+    "ratio",
+    ax=ax,
+    legend=True,
+    cmap="OrRd",
     )
     f.suptitle("Ratio of Choice A over all expressed ballots")
     return geo_data 
