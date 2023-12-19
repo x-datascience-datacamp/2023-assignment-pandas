@@ -43,10 +43,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     regions_and_departments["code_dep"] = regions_and_departments["code_dep"].str.lstrip("0")
     merged_df = pd.merge(
-        referendum,
-        regions_and_departments,
-        left_on='Department code',
-        right_on='code_dep'
+    referendum,
+    regions_and_departments,
+    left_on='Department code',
+    right_on='code_dep'
     )
     mask = merged_df["Department name"].isin(
         [
@@ -126,4 +126,3 @@ if __name__ == "__main__":
 
     plot_referendum_map(referendum_results)
     plt.show()
-
