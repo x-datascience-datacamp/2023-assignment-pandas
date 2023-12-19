@@ -46,7 +46,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
     referendum = referendum.loc[:36567, :]
     referendum['Department code'] = referendum['Department code'].apply(
         lambda x: '{0:0>2}'.format(x)
