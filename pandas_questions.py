@@ -32,8 +32,8 @@ def merge_regions_and_departments(regions, departments):
         columns={"code": "code_reg", "name": "name_reg"}
     )
     rename_departments = departments.rename(
-        columns={"region_code": "code_reg", 
-                 "code": "code_dep", 
+        columns={"region_code": "code_reg",
+                 "code": "code_dep",
                  "name": "name_dep"}
     )
     merged_data = pd.merge(
@@ -52,21 +52,22 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    nums = ['971', '972', '973', '974', '976', '975', 
+            '977', '978', '984', '986', '987', '988', '989']
     clean_df = regions_and_departments[
         ~regions_and_departments["code_dep"].isin(
-        ['971', '972', '973', '974', '976', '975', 
-         '977', '978', '984', '986', '987', '988', '989']
+        nums
         )
     ]
     clean_df.loc[:, "code_dep"] = (
         clean_df.loc[:, "code_dep"]
             .apply(lambda x: x.lstrip('0'))
     )
-
+    code = ['ZA', 'ZB', 'ZC', 'ZD', 'ZM',
+            'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ']
     referendum["code_dep"] = referendum["Department code"]
     referendum_without_domtom = referendum[~referendum["code_dep"].isin(
-        ['ZA', 'ZB', 'ZC', 'ZD', 'ZM', 
-         'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ']
+        code
     )]
     merged_referendum_and_areas = pd.merge(
         clean_df,
@@ -121,7 +122,7 @@ def plot_referendum_map(referendum_result_by_regions):
         how="left"
     ).drop(columns=["nom"], axis=1)
     ref_result_geo["ratio"] = ref_result_geo["Choice A"] / (
-        ref_result_geo["Choice A"] + 
+        ref_result_geo["Choice A"] +
         ref_result_geo["Choice B"]
     )
     gdf = gpd.GeoDataFrame(
@@ -148,3 +149,4 @@ if __name__ == "__main__":
 
     plot_referendum_map(ref_results)
     plt.show()
+    
