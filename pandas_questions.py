@@ -19,14 +19,6 @@ def load_data():
     regions = pd.read_csv("data/regions.csv", sep=",")
     departments = pd.read_csv("data/departments.csv", sep=",")
 
-    regions.rename(
-        columns={"code": "code_reg", "name": "name_reg"}, inplace=True
-    )
-
-    departments.rename(
-        columns={"code": "code_dep", "name": "name_dep"}, inplace=True
-    )
-
     return referendum, regions, departments
 
 
@@ -36,8 +28,16 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    df = pd.merge(
-        regions, departments, left_on="code_reg", right_on="region_code"
+    df = pd.merge(regions, departments, left_on="code", right_on="region_code")
+
+    df.rename(
+        columns={
+            "region_code": "code_reg",
+            "name_x": "name_reg",
+            "code_y": "code_dep",
+            "name_y": "name_dep",
+        },
+        inplace=True,
     )
 
     return df[["code_reg", "name_reg", "code_dep", "name_dep"]]
@@ -49,14 +49,28 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    # selecting only the departments in metropolitan France
+    regions_and_departments_without_dom = regions_and_departments.loc[
+        regions_and_departments["code_dep"].apply(len) <= 2
+    ]
+    referendum_without_dom = referendum.loc[
+        ~(referendum["Department code"].apply(lambda x: "Z" in x))
+    ]
+
+    # changing some keys of 'referendum' so that they match with the one of regions_and_departments
+    dict_replace = {str(i): f"0{i}" for i in range(1, 10)}
+    referendum_without_dom.loc[:, "Department code"] = referendum_without_dom[
+        "Department code"
+    ].replace(dict_replace)
+
     df = pd.merge(
-        left=referendum,
-        right=regions_and_departments,
+        left=referendum_without_dom,
+        right=regions_and_departments_without_dom,
         left_on="Department code",
         right_on="code_dep",
     )
 
-    return df.loc[df["code_dep"].apply(len) <= 2]
+    return df
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -65,9 +79,13 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    return referendum_and_areas.groupby("name_reg")[
-        ["Registered", "Abstentions", "Null", "Choice A", "Choice B"]
-    ].sum()
+    return (
+        referendum_and_areas.groupby("name_reg")[
+            ["Registered", "Abstentions", "Null", "Choice A", "Choice B"]
+        ]
+        .sum()
+        .reset_index()
+    )
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -88,10 +106,11 @@ def plot_referendum_map(referendum_result_by_regions):
         left_on="nom",
         right_on="name_reg",
     )
-    df_merge["ratio"] = df_merge["Choice A"] / df_merge["Registered"]
 
-    df_merge.reset_index(inplace=True)
-    df_merge.rename(columns={"nom": "name_reg"}, inplace=True)
+    choice_a_series = df_merge["Choice A"]
+    df_merge["ratio"] = choice_a_series / (
+        choice_a_series + df_merge["Choice B"]
+    )
 
     df_merge.plot("ratio", legend=True)
 
