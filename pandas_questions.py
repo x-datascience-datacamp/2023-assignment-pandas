@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 
 
 def load_data():
-    referendum = pd.read_csv('data/referendum.csv', delimiter=';')  
-    regions = pd.read_csv('data/regions.csv')        
+    referendum = pd.read_csv('data/referendum.csv', delimiter=';')
+    regions = pd.read_csv('data/regions.csv')
     departments = pd.read_csv('data/departments.csv')
     return referendum, regions, departments
 
@@ -26,14 +26,18 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    merged_df = pd.merge(departments, regions, left_on='region_code', right_on='code', 
-                         suffixes=('_dep', '_reg'))
+    merged_df = pd.merge(
+    departments,
+    regions,
+    left_on='region_code',
+    right_on='code',
+    suffixes=('_dep', '_reg')
+)
     return merged_df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
 
 
-def merge_referendum_and_areas(referendum,regions_and_departments):
+def merge_referendum_and_areas(referendum, regions_and_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
-
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
@@ -68,7 +72,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     """
     referendum_result = (
         referendum_and_areas.groupby('code_reg').agg({
-        'name_reg': 'first', 'Registered': 'sum', 'Abstentions':'sum', 'Null': 'sum', 'Choice A': 'sum', 'Choice B': 'sum'}))
+        'name_reg': 'first', 'Registered': 'sum', 'Abstentions': 'sum', 'Null': 'sum', 'Choice A': 'sum', 'Choice B': 'sum'}))
     return referendum_result
 
 
