@@ -1,3 +1,4 @@
+
 """Plotting referendum results in pandas.
 
 In short, we want to make beautiful map to report results of a referendum. In
@@ -15,10 +16,9 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
-
+    referendum = pd.read_csv(r'data/referendum.csv', sep=';')
+    regions = pd.read_csv(r'data/regions.csv', sep=',')
+    departments = pd.read_csv(r'data/departments.csv', sep=',')
     return referendum, regions, departments
 
 
@@ -28,8 +28,9 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
-    return pd.DataFrame({})
+    df = regions.merge(departments, left_on='code', right_on='region_code',
+                       suffixes=('_reg', '_dep'))
+    return df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -38,31 +39,68 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
-    return pd.DataFrame({})
+    regions_and_departments.replace(['01', '02', '03', '04',
+                                    '05', '06', '07', '08', '09'],
+                                    ['1', '2', '3', '4', '5', '6',
+                                    '7', '8', '9'], inplace=True)
+    referendum_and_areas = referendum.merge(regions_and_departments,
+                                            left_on='Department code',
+                                            right_on='code_dep', suffixes="")
+    # referendum_and_areas.drop(columns=['code_dep'], inplace=True)
+    return referendum_and_areas
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
-
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-
-    return pd.DataFrame({})
+    referendum_result_by_regions = referendum_and_areas.groupby(
+        'code_reg',
+        as_index=False,
+        observed=False
+        ).sum()
+    referendum_result_by_regions = (
+        referendum_result_by_regions.merge(
+            referendum_and_areas[['code_reg', 'name_reg']],
+            left_on='code_reg', right_on='code_reg',
+            suffixes='', how='outer'
+        )
+    )
+    referendum_result_by_regions.index = (
+        referendum_result_by_regions['code_reg']
+    )
+    return referendum_result_by_regions[
+        ['name_reg', 'Registered', 'Abstentions',
+         'Null', 'Choice A', 'Choice B']].drop_duplicates()
 
 
 def plot_referendum_map(referendum_result_by_regions):
     """Plot a map with the results from the referendum.
-
     * Load the geographic data with geopandas from `regions.geojson`.
     * Merge these info into `referendum_result_by_regions`.
     * Use the method `GeoDataFrame.plot` to display the result map. The results
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
-    return gpd.GeoDataFrame({})
+    map = gpd.read_file(r'data/regions.geojson')
+    referendum_results = (
+        map.merge(referendum_result_by_regions,
+                  right_on='code_reg', left_on='code')
+    )
+    referendum_results['ratio'] = (
+        referendum_results['Choice A'] /
+        (referendum_results['Choice A'] + referendum_results['Choice B'])
+    )
+    plt.figure()
+    referendum_results.plot(
+        column='ratio', cmap='viridis', legend=True, figsize=(10, 6)
+        )
+    plt.title("ratio for vote 'Choice A'")
+    plt.xticks([])
+    plt.yticks([])
+    plt.show()
+    return referendum_results
 
 
 if __name__ == "__main__":
