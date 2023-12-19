@@ -50,19 +50,22 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    merged_without_domtom = regions_and_departments[~regions_and_departments["code_dep"].isin(
+    clean_df= regions_and_departments[
+        ~regions_and_departments["code_dep"].isin(
         ['971', '972', '973', '974', '976', '975', 
          '977', '978', '984', '986', '987', '988', '989']
     )]
-    merged_without_domtom.loc[:, "code_dep"] = merged_without_domtom.loc[:, "code_dep"
-    ].apply(lambda x: x.lstrip('0'))
+    clean_df.loc[:, "code_dep"] = (
+    clean_df.loc[:, "code_dep"]
+    .apply(lambda x: x.lstrip('0'))
+    )
     referendum["code_dep"] = referendum["Department code"]
     referendum_without_domtom = referendum[~referendum["code_dep"].isin(
         ['ZA', 'ZB', 'ZC', 'ZD', 'ZM', 
          'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ']
     )]
     merged_referendum_and_areas = pd.merge(
-        merged_without_domtom,
+        clean_df,
         referendum_without_domtom,
         on="code_dep",
         how="left"
@@ -83,10 +86,13 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    ref_result_by_regions = referendum_and_areas.groupby(
-        ["code_reg", "name_reg"]
-    ).sum(numeric_only=True
-    ).reset_index().set_index('code_reg').drop(columns=["Town code"], axis=1)
+    ref_result_by_regions = (
+        referendum_and_areas.groupby(["code_reg", "name_reg"])
+        .sum(numeric_only=True)
+        .reset_index()
+        .set_index('code_reg')
+        .drop(columns=["Town code"], axis=1)
+    )
 
     return ref_result_by_regions
 
