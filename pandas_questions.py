@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 
 
 def func(x):
+    """Auxiliary function to fix the code of the departments."""
     if len(x) == 1:
         return '0' + x
     return x
