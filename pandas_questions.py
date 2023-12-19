@@ -52,28 +52,26 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     merge_without_DOMTOM = regions_and_departments[~regions_and_departments["code_dep"].isin(
         ['971', '972', '973', '974', '976', '975', '977', '978', '984', '986', '987', '988', '989']
-        )]
+    )]
     merge_without_DOMTOM.loc[:, "code_dep"] = merge_without_DOMTOM.loc[:, "code_dep"].apply(lambda x: x.lstrip('0'))
-    referendum["code_dep"]=referendum["Department code"]
-    referendum_without_DOMTOM=referendum[~referendum["code_dep"].isin(['ZA', 
-                                                                       'ZB', 
-                                                                       'ZC', 
-                                                                       'ZD',
-                                                                       'ZM', 
-                                                                       'ZN', 
-                                                                       'ZP', 
-                                                                       'ZS', 
-                                                                       'ZW', 
-                                                                       'ZX', 
-                                                                       'ZZ'])]
-    merge_referendum_and_areas=pd.merge(merge_without_DOMTOM, referendum_without_DOMTOM, on="code_dep", how="left")
-    new_column_order = ['Department code', 'Department name', 'Town code', 'Town name',
-                        'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B',
-                        'code_dep', 'code_reg', 'name_reg', 'name_dep'
-                        ]
+    referendum["code_dep"] = referendum["Department code"]
+    referendum_without_DOMTOM = referendum[~referendum["code_dep"].isin(
+        ['ZA', 'ZB', 'ZC', 'ZD', 'ZM', 'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ']
+    )]
+    merge_referendum_and_areas = pd.merge(
+        merge_without_DOMTOM,
+        referendum_without_DOMTOM,
+        on="code_dep",
+        how="left"
+    )
+    new_column_order = [
+        'Department code', 'Department name', 'Town code', 'Town name',
+        'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B',
+        'code_dep', 'code_reg', 'name_reg', 'name_dep'
+    ]
     referendum_and_areas = merge_referendum_and_areas[new_column_order]
 
-    return merge_referendum_and_areas
+    return referendum_and_areas
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -117,7 +115,6 @@ def plot_referendum_map(referendum_result_by_regions):
     )
 
     return gdf
-
 
 if __name__ == "__main__":
 
