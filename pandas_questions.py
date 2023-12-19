@@ -32,7 +32,9 @@ def merge_regions_and_departments(regions, departments):
         columns={"code": "code_reg", "name": "name_reg"}
     )
     rename_departments = departments.rename(
-        columns={"region_code": "code_reg", "code": "code_dep", "name": "name_dep"}
+        columns={"region_code": "code_reg", 
+                 "code": "code_dep", 
+                 "name": "name_dep"}
     )
     merged_data = pd.merge(
         rename_regions[["code_reg", "name_reg"]],
@@ -50,15 +52,17 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    clean_df= regions_and_departments[
+    clean_df = regions_and_departments[
         ~regions_and_departments["code_dep"].isin(
         ['971', '972', '973', '974', '976', '975', 
          '977', '978', '984', '986', '987', '988', '989']
-    )]
+        )
+    ]
     clean_df.loc[:, "code_dep"] = (
-    clean_df.loc[:, "code_dep"]
-    .apply(lambda x: x.lstrip('0'))
+        clean_df.loc[:, "code_dep"]
+            .apply(lambda x: x.lstrip('0'))
     )
+
     referendum["code_dep"] = referendum["Department code"]
     referendum_without_domtom = referendum[~referendum["code_dep"].isin(
         ['ZA', 'ZB', 'ZC', 'ZD', 'ZM', 
