@@ -29,11 +29,11 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
     merged = pd.merge(
-        regions,
-        departments,
-        left_on='code',
-        right_on='region_code',
-        suffixes=('_reg', '_dep'),
+        regions , 
+        departments , 
+        left_on='code' , 
+        right_on='region_code' , 
+        suffixes=('_reg', '_dep') , 
         )
 
     return merged[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
@@ -81,13 +81,13 @@ def compute_referendum_result_by_regions(referendum_and_areas):
 
     referendum_result = (
         referendum_and_areas.groupby('code_reg').agg({
-            'name_reg': 'first',
-            'Registered': 'sum',
-            'Abstentions': 'sum',
-            'Null': 'sum',
-            'Choice A': 'sum',
-            'Choice B': 'sum',
-    })
+            'name_reg': 'first' , 
+            'Registered': 'sum' , 
+            'Abstentions': 'sum' , 
+            'Null': 'sum' , 
+            'Choice A': 'sum' , 
+            'Choice B': 'sum' , 
+        })
     )
     return referendum_result
 
