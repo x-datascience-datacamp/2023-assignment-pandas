@@ -91,7 +91,7 @@ def plot_referendum_map(referendum_result_by_regions):
     df_merge["ratio"] = df_merge["Choice A"] / df_merge["Registered"]
 
     df_merge.reset_index(inplace=True)
-    df_merge.rename(columns={"nom": "name_reg"})
+    df_merge.rename(columns={"nom": "name_reg"}, inplace=True)
 
     df_merge.plot("ratio", legend=True)
 
