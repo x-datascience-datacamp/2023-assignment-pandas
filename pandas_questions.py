@@ -50,30 +50,28 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    merge_regions_and_departments_without_DOMTOM = regions_and_departments[
-        ~regions_and_departments["code_dep"].isin(['971', 
-                                                   '972', 
-                                                   '973', 
-                                                   '974', 
-                                                   '976', 
-                                                   '975', 
-                                                   '977', 
-                                                   '978', 
-                                                   '984', 
-                                                   '986', 
-                                                   '987', 
-                                                   '988', 
-                                                   '989'])
-    ]
-    merge_regions_and_departments_without_DOMTOM.loc[:, "code_dep"] = merge_regions_and_departments_without_DOMTOM.loc[:, "code_dep"].apply(lambda x: x.lstrip('0'))
-    rename_referendum = referendum.rename(columns={"Department code": "code_dep"})
-    rename_referendum_without_DOMTOM = rename_referendum[~rename_referendum["code_dep"].isin(['ZA', 'ZB', 'ZC', 'ZD', 'ZM', 'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ'])]
-    merge_referendum_and_areas = pd.merge(
-        merge_regions_and_departments_without_DOMTOM,
-        rename_referendum_without_DOMTOM.drop(columns=["Department name"], axis=1),
-        on="code_dep",
-        how="left"
-    )
+    merge_without_DOMTOM = regions_and_departments[~regions_and_departments["code_dep"].isin(
+        ['971', '972', '973', '974', '976', '975', '977', '978', '984', '986', '987', '988', '989']
+        )]
+    merge_without_DOMTOM.loc[:, "code_dep"] = merge_without_DOMTOM.loc[:, "code_dep"].apply(lambda x: x.lstrip('0'))
+    referendum["code_dep"]=referendum["Department code"]
+    referendum_without_DOMTOM=referendum[~referendum["code_dep"].isin(['ZA', 
+                                                                       'ZB', 
+                                                                       'ZC', 
+                                                                       'ZD',
+                                                                       'ZM', 
+                                                                       'ZN', 
+                                                                       'ZP', 
+                                                                       'ZS', 
+                                                                       'ZW', 
+                                                                       'ZX', 
+                                                                       'ZZ'])]
+    merge_referendum_and_areas=pd.merge(merge_without_DOMTOM, referendum_without_DOMTOM, on="code_dep", how="left")
+    new_column_order = ['Department code', 'Department name', 'Town code', 'Town name',
+                        'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B',
+                        'code_dep', 'code_reg', 'name_reg', 'name_dep'
+                        ]
+    referendum_and_areas = merge_referendum_and_areas[new_column_order]
 
     return merge_referendum_and_areas
 
