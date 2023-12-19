@@ -1,12 +1,12 @@
 """Plotting referendum results in pandas.
 
-In short, we want to make beautiful map to report results of a referendum. In
+In short, we want to make a beautiful map to report results of a referendum. In
 some way, we would like to depict results with something similar to the maps
 that you can find here:
 https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/example_map.png
 
-To do that, you will load the data as pandas.DataFrame, merge the info and
-aggregate them by regions and finally plot them on a map using `geopandas`.
+To do that, you will load the data as a pandas.DataFrame, merge the info and
+aggregate them by regions, and finally plot them on a map using `geopandas`.
 """
 import pandas as pd
 import geopandas as gpd
@@ -27,13 +27,16 @@ def load_data():
 
 
 def merge_regions_and_departments(regions, departments):
-    """Merge regions and departments in one DataFrame.
+    """Merge regions and departments into one DataFrame.
 
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
     merged_df = pd.merge(
-        regions, departments, how="inner", left_on="code", right_on="region_code"
+        regions, departments,
+        how="inner", 
+        left_on="code", 
+        right_on="region_code"
     )
 
     # Select and rename the desired columns
@@ -72,7 +75,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
     # Drop lines relative to DOM-TOM-COM departments and French living abroad
     merged_df = merged_df[
-        ~merged_df["Department name"].isin(["COM", "01", "02", "03", "04", "05", "06"])
+        ~merged_df["Department name"]
+        .isin(
+            ["COM", "01", "02", "03", "04", "05", "06"]
+            )
     ]
 
     return merged_df
@@ -133,7 +139,9 @@ def plot_referendum_map(referendum_result_by_regions):
     )
 
     # Plot the map
-    ax = merged_data.plot(column="ratio", cmap="coolwarm", legend=True, figsize=(10, 8))
+    merged_data.plot(
+        column="ratio", cmap="coolwarm", legend=True, figsize=(10, 8)
+        )
 
     # Set plot title
     plt.title("Referendum Results - Choice A Ratio")
