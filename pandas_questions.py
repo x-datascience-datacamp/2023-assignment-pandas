@@ -35,7 +35,6 @@ def merge_regions_and_departments(regions, departments):
     return result_df
 
 
-
 def merge_referendum_and_areas(referendum, regions_and_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
 
@@ -46,10 +45,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     France, like Guadaloupe, Reunion, or Tahiti.
     """
 
-    referendum = referendum.loc[~referendum['Department code'].str.startswith('Z')]
-    merged_df = pd.merge(regions_and_departments, referendum, how='inner', left_on='code_dep', right_on='Department code')
-    result_df = merged_df.rename(columns={'code_reg': 'Region code', 'name_reg':'Region name'})
-    result_df = result_df.drop({'code_dep','name_dep'}, axis=1)
+    referendum = referendum[~referendum['Department code'].str.startswith('Z')]
+    result_df = pd.merge(regions_and_departments, referendum, how='inner', left_on='code_dep', right_on='Department code')
     return result_df 
 
 
@@ -59,8 +56,10 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
+    referendum_and_areas = referendum_and_areas.drop({'code_dep','name_dep','code_reg','Department code', 'Department name','Town code', 'Town name'}, axis=1)
+    result_df = referendum_and_areas.groupby(['name_reg']).sum().reset_index()
+    return result_df
 
-    return pd.DataFrame({})
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -72,8 +71,16 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
+    geo_data = gpd.read_file('data/regions.geojson')
+    referendum_result_by_regions = referendum_result_by_regions.set_index('name_reg')
+    merged_data = geo_data.merge(referendum_result_by_regions, left_on='nom', right_index=True)
+    merged_data['ratio'] = merged_data['Choice A'] / (merged_data['Choice A'] + merged_data['Choice B'])
 
-    return gpd.GeoDataFrame({})
+    merged_data.plot(column='ratio', cmap='viridis', legend=True, figsize=(12, 8))
+    plt.title('Referendum Results: Ratio of "Choice A" over all expressed ballots')
+    plt.show()
+
+    return merged_data
 
 
 if __name__ == "__main__":
