@@ -61,7 +61,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     ]
     clean_df.loc[:, "code_dep"] = (
         clean_df.loc[:, "code_dep"]
-            .apply(lambda x: x.lstrip('0'))
+        .apply(lambda x: x.lstrip('0'))
     )
     code = ['ZA', 'ZB', 'ZC', 'ZD', 'ZM',
             'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ']
@@ -149,4 +149,3 @@ if __name__ == "__main__":
 
     plot_referendum_map(ref_results)
     plt.show()
-    
