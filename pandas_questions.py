@@ -26,14 +26,11 @@ def load_data():
 
 
 def merge_regions_and_departments(regions, departments):
-
-    """
-    Merge regions and departments in one DataFrame.
+    """Merge regions and departments in one DataFrame.
 
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
     merged_df = pd.merge(regions[['code', 'name']],
                          departments[['region_code', 'code', 'name']],
                          left_on='code',
@@ -51,6 +48,7 @@ def merge_regions_and_departments(regions, departments):
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
+
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
