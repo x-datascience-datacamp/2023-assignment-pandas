@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
+    referendum = pd.read_csv('data/referendum.csv', sep=';')
+    regions = pd.read_csv('data/regions.csv')
+    departments = pd.read_csv('data/departments.csv')
 
     return referendum, regions, departments
 
@@ -28,8 +28,12 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
+    df_merge = pd.merge(departments, regions, how='inner',
+                        left_on='region_code', right_on='code',
+                        suffixes=('_dep', '_reg'))
 
-    return pd.DataFrame({})
+    return df_merge.drop(['id_reg', 'slug_reg', 'id_dep',
+                          'region_code', 'slug_dep'], axis=1)
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
