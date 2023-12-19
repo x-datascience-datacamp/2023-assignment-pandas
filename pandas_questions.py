@@ -36,15 +36,15 @@ def merge_regions_and_departments(regions, departments):
     return merged_df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
 
 
-def merge_referendum_and_areas(referendum, regions_and_departments):
+def merge_referendum_and_areas(referendum, regions_departments):
     """Merge referendum and regions_and_departments in one DataFrame.
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    regions_and_departments["code_dep"] = regions_and_departments["code_dep"].str.lstrip("0")
+    regions_departments["code_dep"] = regions_departments["code_dep"].str.lstrip("0")
     merged_df = pd.merge(
         referendum,
-        regions_and_departments,
+        regions_departments,
         left_on='Department code',
         right_on='code_dep'
     )
