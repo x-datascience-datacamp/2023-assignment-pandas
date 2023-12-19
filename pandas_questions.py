@@ -57,36 +57,39 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
-    departments_to_drop = {
-        "GUADELOUPE",
-        "MARTINIQUE",
-        "GUYANE",
-        "LA REUNION",
-        "MAYOTTE",
-        "NOUVELLE CALEDONIE",
-        "POLYNESIE FRANCAISE",
-        "SAINT PIERRE ET MIQUELON",
-        "WALLIS-ET-FUTUNA",
-        "SAINT-MARTIN/SAINT-BARTHELEMY",
-        "FRANCAIS DE L'ETRANGER"
-    }
-
-    remove = referendum["Department name"].isin(departments_to_drop)
-
     # Clean merge str column by removing leading zeros
     regions_and_departments["code_dep"] = regions_and_departments[
         "code_dep"
     ].str.lstrip("0")
 
-    # Merge with conditions
+    # take department codes from regions_and_departments as basis
     referendum_and_areas = pd.merge(
         how="left",
-        left=referendum[~remove],
-        right=regions_and_departments,
-        left_on="Department code",
-        right_on="code_dep",
+        left=regions_and_departments,
+        right=referendum,
+        left_on="code_dep",
+        right_on="Department code",
     )
+
+    # Drop unwanted lines
+    mask = referendum_and_areas["Department name"].isin(
+        [
+            "GUADELOUPE",
+            "MARTINIQUE",
+            "GUYANE",
+            "LA REUNION",
+            "MAYOTTE",
+            "NOUVELLE CALEDONIE",
+            "POLYNESIE FRANCAISE",
+            "SAINT PIERRE ET MIQUELON",
+            "WALLIS-ET-FUTUNA",
+            "SAINT-MARTIN/SAINT-BARTHELEMY",
+            "FRANCAIS DE L'ETRANGER",
+        ]
+    )
+    referendum_and_areas = referendum_and_areas.loc[~mask]
+
+    referendum_and_areas.dropna(inplace=True)
 
     return referendum_and_areas
 
