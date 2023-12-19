@@ -55,13 +55,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     nums = ['971', '972', '973', '974', '976', '975', 
             '977', '978', '984', '986', '987', '988', '989']
     clean_df = regions_and_departments[
-        ~regions_and_departments["code_dep"].isin(
-        nums
-        )
-    ]
+        ~regions_and_departments["code_dep"].isin(nums)
+        ]
     clean_df.loc[:, "code_dep"] = (
-        clean_df.loc[:, "code_dep"]
-        .apply(lambda x: x.lstrip('0'))
+        clean_df.loc[:, "code_dep"].apply(lambda x: x.lstrip('0'))
     )
     code = ['ZA', 'ZB', 'ZC', 'ZD', 'ZM',
             'ZN', 'ZP', 'ZS', 'ZW', 'ZX', 'ZZ']
