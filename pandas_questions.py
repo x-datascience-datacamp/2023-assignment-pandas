@@ -103,9 +103,9 @@ def plot_referendum_map(referendum_result_by_regions):
     """
     geo_data = gpd.read_file('./data/regions.geojson')
     merged = geo_data.merge(referendum_result_by_regions,
-                                     left_on='code',
-                                     right_on='code_reg',
-                                     how='left')
+                            left_on='code',
+                            right_on='code_reg',
+                            how='left')
     merged['total_expressed'] = merged[
         'Choice A'] + merged['Choice B']
     merged['ratio'] = merged[
