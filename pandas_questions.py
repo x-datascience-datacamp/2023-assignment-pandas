@@ -29,11 +29,11 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
     merged = pd.merge(
-        regions , 
-        departments , 
-        left_on='code' , 
-        right_on='region_code' , 
-        suffixes=('_reg', '_dep') , 
+        regions, 
+        departments,  
+        left_on='code', 
+        right_on='region_code', 
+        suffixes=('_reg', '_dep'),
         )
 
     return merged[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
