@@ -48,10 +48,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
-
-    Autre solution:
-    df1 = referendum[~referendum['Department code'].
-    str.contains('Z')] # ~ = not
     """
     df1 = referendum[(referendum['Department code'].str.isdigit()) |
                      (referendum['Department code'] == '2A') |
