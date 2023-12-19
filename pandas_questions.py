@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame(pd.read_csv('./referendum.csv', delimiter=';'))
-    df_reg = pd.DataFrame(pd.read_csv('./regions.csv', delimiter=','))
-    df_dep = pd.DataFrame(pd.read_csv('./departments.csv', delimiter=','))
+    referendum = pd.read_csv('data/referendum.csv', delimiter=';')
+    df_reg = pd.read_csv('data/regions.csv', delimiter=',')
+    df_dep = pd.read_csv('data/departments.csv', delimiter=',')
 
     return referendum, df_reg, df_dep
 
@@ -51,20 +51,30 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    final_df = pd.merge(referendum, regions_and_departments,
-                        left_on='Department code', right_on='code_dep',
-                        how='inner')
-
     # Liste des valeurs à supprimer
-    values_to_remove = ['2A', '2B', 'ZA', 'ZB', 'ZC', 'ZD', 'ZM', 'ZN', 'ZP',
-                        'ZS', 'ZW', 'ZX', 'ZZ']
+    french_abroad = ['ZA', 'ZB', 'ZC', 'ZD', 'ZM', 'ZN', 'ZP', 'ZS', 'ZW',
+                     'ZX', 'ZZ']
 
     # Créer un masque booléen pour les lignes à conserver
-    mask = ~final_df['Department code'].isin(values_to_remove)
+    mask = ~referendum['Department code'].isin(french_abroad)
 
     # Sélectionner les lignes à conserver
-    final_df_filtered = final_df[mask]
-    return pd.DataFrame(final_df_filtered)
+    referendum_filtered = referendum[mask]
+
+    # Harmonisation des codes de départements
+    regs_and_deps = regions_and_departments.copy()
+    regs_and_deps['code_dep'] = regions_and_departments['code_dep'].apply(
+        lambda x: int(x) if x not in ('2A', '2B') else x)
+    ref2 = referendum_filtered.copy()
+    ref2['Department code'] = referendum_filtered['Department code'].apply(
+        lambda x: int(x) if x not in ('2A', '2B') else x)
+
+    # Fusion
+    final_df = pd.merge(ref2, regs_and_deps,
+                        left_on='Department code', right_on='code_dep',
+                        how='left')
+
+    return pd.DataFrame(final_df)
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -97,12 +107,14 @@ def plot_referendum_map(referendum_result_by_regions):
                            left_on='code', right_on='code_reg', how='inner')
 
     # Calculer le taux de 'Choice A' sur tous les bulletins exprimés
-    merged_data['ratio'] = merged_data['Choice A'] / merged_data['Registered']
+    merged_data['ratio'] = merged_data['Choice A'] / (merged_data['Choice A']
+                                                      +
+                                                      merged_data['Choice B'])
     # Afficher la carte
     merged_data.plot(column='ratio', cmap='coolwarm', legend=True)
 
     # Retourner le GeoDataFrame avec la colonne 'ratio'
-    return merged_data[['geometry', 'ratio']]
+    return merged_data[['name_reg', 'ratio']]
 
 
 if __name__ == "__main__":
