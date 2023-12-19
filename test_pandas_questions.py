@@ -44,17 +44,17 @@ def test_merge_referendum_and_area():
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-
     # check that there is no missing values
     assert referendum_and_areas.shape == referendum_and_areas.dropna().shape, (
+
         "There should be no missing values in the DataFrame. Use dropna?"
     )
-
     assert set(referendum_and_areas.columns) == set([
         'Department code', 'Department name', 'Town code', 'Town name',
         'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B',
         'code_dep', 'code_reg', 'name_reg', 'name_dep'
     ])
+
     assert referendum_and_areas.shape == (36565, 13), (
         "Shape of the DataFrame should be (36565, 13). "
         "Check for mismatch in column formats."
