@@ -94,7 +94,9 @@ def plot_referendum_map(referendum_result_by_regions):
     gdf_referendum['ratio'] = gdf_referendum['Choice A'] / (
         gdf_referendum['Choice A'] + gdf_referendum['Choice B'])
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-    gdf_referendum.plot(column='ratio', cmap='viridis', linewidth=0.8, ax=ax, edgecolor='0.8', legend=True)
+    gdf_referendum.plot(column='ratio',
+                        cmap='viridis', linewidth=0.8,
+                        ax=ax, edgecolor='0.8', legend=True)
     plt.title('Referendum Results: Ratio of Choice A over Expressed Ballots')
     plt.xlabel('Longitude')
     plt.ylabel('Latitude')
@@ -121,4 +123,3 @@ if __name__ == "__main__":
     print(referendum_results)
     plot_referendum_map(referendum_results)
     plt.show()
-    
