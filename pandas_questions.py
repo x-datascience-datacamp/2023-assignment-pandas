@@ -47,7 +47,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     merged_df = pd.merge(referendum, regions_and_departments,
                          left_on='Department code', right_on='code_dep')
     return merged_df
-    return pd.DataFrame({})
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
