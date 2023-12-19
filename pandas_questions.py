@@ -6,7 +6,7 @@ that you can find here:
 https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/example_map.png
 
 To do that, you will load the data as pandas.DataFrame, merge the info and
-aggregate them by regions and finally plot them on a map using `geopandas`.
+aggregate them by regions and finally plot them on a map using geopandas.
 """
 import pandas as pd
 import geopandas as gpd
@@ -125,7 +125,7 @@ def plot_referendum_map(referendum_result_by_regions):
     return geo_data
 
 
-if _name_ == "_main_":
+if __name__ == "_main_":
 
     referendum, df_reg, df_dep = load_data()
     regions_and_departments = merge_regions_and_departments(
