@@ -36,15 +36,15 @@ def merge_regions_and_departments(regions, departments):
     return merged_df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
 
 
-def merge_referendum_and_areas(referendum, regions_departments):
+def merge_referendum_and_areas(referendum, regions_depart):
     """Merge referendum and regions_and_departments in one DataFrame.
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    regions_departments["code_dep"] = regions_departments["code_dep"].str.lstrip("0")
+    regions_depart["code_dep"] = regions_depart["code_dep"].str.lstrip("0")
     merged_df = pd.merge(
         referendum,
-        regions_departments,
+        regions_depart,
         left_on='Department code',
         right_on='code_dep'
     )
@@ -72,8 +72,8 @@ def merge_referendum_and_areas(referendum, regions_departments):
 def compute_referendum_result_by_regions(referendum_and_areas):
     referendum_result = (
         referendum_and_areas.groupby('code_reg').agg({
-            'name_reg': 'first', 'Registered': 'sum', 'Abstentions': 'sum',
-            'Null': 'sum', 'Choice A': 'sum', 'Choice B': 'sum'
+        'name_reg': 'first', 'Registered': 'sum', 'Abstentions': 'sum',
+        'Null': 'sum', 'Choice A': 'sum', 'Choice B': 'sum'
         }))
     return referendum_result
 
