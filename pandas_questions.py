@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
+    referendum = pd.read_csv('data/referendum.csv', sep=';')
+    regions = pd.read_csv('data/regions.csv')
+    departments = pd.read_csv('data/departments.csv')
 
     return referendum, regions, departments
 
@@ -28,8 +28,12 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
+    
+    merged_df = pd.merge(regions, departments, how='inner', left_on='code', right_on='region_code')
+    result_df = merged_df[['code_x', 'name_x', 'code_y', 'name_y']]
+    result_df = result_df.rename(columns={'code_x': 'code_reg', 'name_x': 'name_reg', 'code_y':'code_dep','name_y': 'name_dep'})
+    return result_df
 
-    return pd.DataFrame({})
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -42,7 +46,11 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     France, like Guadaloupe, Reunion, or Tahiti.
     """
 
-    return pd.DataFrame({})
+    referendum = referendum.loc[~referendum['Department code'].str.startswith('Z')]
+    merged_df = pd.merge(regions_and_departments, referendum, how='inner', left_on='code_dep', right_on='Department code')
+    result_df = merged_df.rename(columns={'code_reg': 'Region code', 'name_reg':'Region name'})
+    result_df = result_df.drop({'code_dep','name_dep'}, axis=1)
+    return result_df 
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
