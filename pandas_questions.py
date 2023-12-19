@@ -57,7 +57,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
         ~(referendum["Department code"].apply(lambda x: "Z" in x))
     ]
 
-    # changing some keys of 'referendum' so that they match with the one of regions_and_departments
+    # changing some keys of 'referendum' so that they match with the one
+    # of regions_and_departments
     dict_replace = {str(i): f"0{i}" for i in range(1, 10)}
     referendum_without_dom.loc[:, "Department code"] = referendum_without_dom[
         "Department code"
