@@ -49,13 +49,13 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     regions_and_departments = regions_and_departments[
         regions_and_departments['code_dep'] != 'COM'
-    ]
+    ].copy()
     referendum = referendum[
         referendum["Department name"] != "FRANCAIS DE L'ETRANGER"
-    ]
-    referendum["Department code"] = referendum["Department code"].apply(
+    ].copy()
+    referendum.loc[:, "Department code"] = referendum["Department code"].apply(
         lambda x: '{0:0>2}'.format(x)
-    )
+        )
     df1 = pd.merge(
         referendum, regions_and_departments,
         left_on='Department code', right_on='code_dep'
