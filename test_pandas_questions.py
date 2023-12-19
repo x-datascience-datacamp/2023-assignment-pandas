@@ -15,10 +15,10 @@ def test_load_data():
     df_ref = pd.read_csv('data/referendum.csv', sep=';')
     assert set(referendum.columns) == set(df_ref.columns)
 
-    df_reg = pd.read_csv('data/regions.csv')
+    df_reg = pd.read_csv('data/regions.csv', sep=',')
     assert set(regions.columns) == set(df_reg.columns)
 
-    df_dep = pd.read_csv('data/departments.csv')
+    df_dep = pd.read_csv('data/departments.csv', sep=',')
     assert set(departments.columns) == set(df_dep.columns)
 
 
