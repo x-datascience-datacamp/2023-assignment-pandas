@@ -43,7 +43,14 @@ def merge_regions_and_departments(regions_df: pd.DataFrame,
 def merge_referendum_and_areas(
     referendum_df: pd.DataFrame, regions_and_departments_df: pd.DataFrame
 ):
-    """Merge referendum and regions_and_departments in one DataFrame."""
+    """Merge referendum and regions_and_departments in one DataFrame.
+
+    You can drop the lines relative to DOM-TOM-COM departments, and the
+    french living abroad, which all have a code that contains `Z`.
+
+    DOM-TOM-COM departments are departements that are remote from metropolitan
+    France, like Guadaloupe, Reunion, or Tahiti.
+    """
     ref_df = referendum_df.copy()
     ref_df["Department code"] = (
         ref_df["Department code"].astype(str).str.zfill(2)
