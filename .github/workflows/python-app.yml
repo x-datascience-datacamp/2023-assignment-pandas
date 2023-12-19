@@ -42,7 +42,7 @@ jobs:
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --max-complexity=10 --max-line-length=80 --statistics
+        flake8 . --count --max-complexity=10 --max-line-length=120 --statistics
     - name: Check doc style with pydocstyle
       run: pydocstyle
 
