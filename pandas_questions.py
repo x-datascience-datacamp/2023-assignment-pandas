@@ -92,7 +92,7 @@ def plot_referendum_map(referendum_result_by_regions):
     merged['ratio'] = merged['Choice A'] / (
         merged['Choice A'] + merged['Choice B']
         )
-    merged.plot()
+    merged.plot(column='ratio', legend=True)
     return gpd.GeoDataFrame(merged)
 
 
