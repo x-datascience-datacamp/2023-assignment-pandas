@@ -18,7 +18,9 @@ def load_data():
     referendum = pd.DataFrame({})
     regions = pd.DataFrame({})
     departments = pd.DataFrame({})
-
+    referendum = pd.read_csv('./data/referendum.csv', delimiter=';')
+    regions = pd.read_csv('./data/regions.csv', delimiter=',')
+    departments = pd.read_csv('./data/departments.csv', delimiter=',')
     return referendum, regions, departments
 
 
@@ -28,8 +30,26 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
+    merge = pd.merge(departments, regions, left_on='region_code',
+                     right_on='code', how='left')[['region_code',
+                                                   'name_y', 'code_x',
+                                                   'name_x']]
+    merge = merge.rename(columns={"region_code": "code_reg",
+                                  "name_y": "name_reg",
+                                  "code_x": "code_dep",
+                                  "name_x": "name_dep"})
+    return merge
 
-    return pd.DataFrame({})
+
+def add_0(string):
+    """Add a 0 before each department code.
+
+    Ex: 1 becomes 01.
+    """
+    if len(string) == 1:
+        return "0" + string
+    else:
+        return string
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -38,8 +58,15 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    ref_copy = referendum[referendum['Department code'] <= '95'].copy()
+    ref_copy.loc[:, 'Department code'] = ref_copy['Department code'
+                                                  ].apply(add_0)
+    reg_copy = regions_and_departments[
+        regions_and_departments['code_dep'] <= '95']
+    merge = pd.merge(ref_copy, reg_copy, left_on='Department code',
+                     right_on='code_dep', how='left')
 
-    return pd.DataFrame({})
+    return merge
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -48,8 +75,14 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
+    df_count = referendum_and_areas.groupby([
+        'code_reg', 'name_reg']).sum()[['Registered',
+                                        'Abstentions',
+                                        'Null',
+                                        'Choice A',
+                                        'Choice B']]
 
-    return pd.DataFrame({})
+    return df_count.reset_index(level='name_reg')
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -61,8 +94,17 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
-    return gpd.GeoDataFrame({})
+    geo_data = gpd.read_file('./data/regions.geojson')
+    merge_geo_count = geo_data.merge(referendum_result_by_regions,
+                                     left_on='code',
+                                     right_on='code_reg',
+                                     how='left')
+    merge_geo_count['total_expressed'] = merge_geo_count[
+        'Choice A'] + merge_geo_count['Choice B']
+    merge_geo_count['ratio'] = merge_geo_count[
+        'Choice A'] / merge_geo_count['total_expressed']
+    merge_geo_count.plot('ratio')
+    return merge_geo_count
 
 
 if __name__ == "__main__":
