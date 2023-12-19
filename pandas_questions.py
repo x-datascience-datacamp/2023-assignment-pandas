@@ -114,7 +114,7 @@ def plot_referendum_map(referendum_result_by_regions):
     merged_data.plot(column='ratio', cmap='coolwarm', legend=True)
 
     # Retourner le GeoDataFrame avec la colonne 'ratio'
-    return merged_data[['name_reg', 'ratio']]
+    return merged_data
 
 
 if __name__ == "__main__":
