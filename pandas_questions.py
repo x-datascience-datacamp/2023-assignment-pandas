@@ -51,7 +51,19 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     french living abroad.
     """
     merge_regions_and_departments_without_DOMTOM = regions_and_departments[
-        ~regions_and_departments["code_dep"].isin(['971', '972', '973', '974', '976', '975', '977', '978', '984', '986', '987', '988', '989'])
+        ~regions_and_departments["code_dep"].isin(['971', 
+                                                   '972', 
+                                                   '973', 
+                                                   '974', 
+                                                   '976', 
+                                                   '975', 
+                                                   '977', 
+                                                   '978', 
+                                                   '984', 
+                                                   '986', 
+                                                   '987', 
+                                                   '988', 
+                                                   '989'])
     ]
     merge_regions_and_departments_without_DOMTOM.loc[:, "code_dep"] = merge_regions_and_departments_without_DOMTOM.loc[:, "code_dep"].apply(lambda x: x.lstrip('0'))
     rename_referendum = referendum.rename(columns={"Department code": "code_dep"})
