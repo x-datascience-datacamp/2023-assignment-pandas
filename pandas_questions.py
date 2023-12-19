@@ -27,12 +27,12 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
     merged_df = pd.merge(
-    departments,
-    regions,
-    left_on='region_code',
-    right_on='code',
-    suffixes=('_dep', '_reg')
-)
+        departments,
+        regions,
+        left_on='region_code',
+        right_on='code',
+        suffixes=('_dep', '_reg')
+    )
     return merged_df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
 
 
@@ -43,10 +43,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     regions_and_departments["code_dep"] = regions_and_departments["code_dep"].str.lstrip("0")
     merged_df = pd.merge(
-    referendum, 
-    regions_and_departments, 
-    left_on='Department code', 
-    right_on='code_dep'
+        referendum,
+        regions_and_departments,
+        left_on='Department code',
+        right_on='code_dep'
     )
     mask = merged_df["Department name"].isin(
         [
@@ -76,8 +76,9 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     """
     referendum_result = (
         referendum_and_areas.groupby('code_reg').agg({
-        'name_reg': 'first', 'Registered': 'sum', 'Abstentions': 'sum',
-        'Null': 'sum', 'Choice A': 'sum', 'Choice B': 'sum'}))
+            'name_reg': 'first', 'Registered': 'sum', 'Abstentions': 'sum',
+            'Null': 'sum', 'Choice A': 'sum', 'Choice B': 'sum'
+        }))
     return referendum_result
 
 
@@ -90,7 +91,7 @@ def plot_referendum_map(referendum_result_by_regions):
     should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-    geo_data = gpd.read_file('data/regions.geojson') 
+    geo_data = gpd.read_file('data/regions.geojson')
     geo_data = geo_data.merge(
         referendum_result_by_regions,
         left_on="code",
@@ -99,14 +100,14 @@ def plot_referendum_map(referendum_result_by_regions):
     geo_data["expressed"] = (geo_data["Choice A"] + geo_data["Choice B"])
     geo_data["ratio"] = (geo_data["Choice A"] / geo_data["expressed"])
     f, ax = plt.subplots()
-    geo_data .plot(
-    "ratio",
-    ax=ax,
-    legend=True,
-    cmap="OrRd",
+    geo_data.plot(
+        "ratio",
+        ax=ax,
+        legend=True,
+        cmap="OrRd",
     )
     f.suptitle("Ratio of Choice A over all expressed ballots")
-    return geo_data 
+    return geo_data
 
 
 if __name__ == "__main__":
@@ -125,3 +126,4 @@ if __name__ == "__main__":
 
     plot_referendum_map(referendum_results)
     plt.show()
+
