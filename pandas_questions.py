@@ -52,7 +52,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-    nums = ['971', '972', '973', '974', '976', '975', 
+    nums = ['971', '972', '973', '974', '976', '975',
             '977', '978', '984', '986', '987', '988', '989']
     clean_df = regions_and_departments[
         ~regions_and_departments["code_dep"].isin(nums)
