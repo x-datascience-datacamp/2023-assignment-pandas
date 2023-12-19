@@ -32,7 +32,6 @@ def merge_regions_and_departments(regions, departments):
         columns={"region_code": "code_reg",
                  "code": "code_dep",
                  "name": "name_dep"})
-    
 
     reg = regions[['code', 'name']].rename(
         columns={"code": "code_reg",
@@ -54,11 +53,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     ref = ref.reset_index('Department code')
 
     ref['Department code'] = ref['Department code'].str.zfill(2)
-            
+
     rdep = regions_and_departments
     merged = ref.merge(
-        rdep[['code_reg', 'name_reg',
-              'code_dep', 'name_dep']],
+        rdep[['code_reg', 'name_reg', 'code_dep', 'name_dep']],
         left_on='Department code', right_on='code_dep', how='left')
     return pd.DataFrame(merged.dropna())
 
@@ -91,7 +89,9 @@ def plot_referendum_map(referendum_result_by_regions):
     merged = gpd.read_file('data/regions.geojson').merge(
         referendum_result_by_regions, right_on='code_reg',
         left_on='code', how='left')
-    merged['ratio'] = merged['Choice A'] / (merged['Choice A'] + merged['Choice B'])
+    merged['ratio'] = merged['Choice A'] / (
+        merged['Choice A'] + merged['Choice B']
+        )
     merged.plot()
     return gpd.GeoDataFrame(merged)
 
