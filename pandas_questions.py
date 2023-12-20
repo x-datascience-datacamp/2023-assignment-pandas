@@ -28,10 +28,10 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    
+
     regions = regions.rename(
          columns={'code': 'region_code',  'name': 'name_reg'})
-    
+
     regions_and_departments = pd.merge(
         departments[['region_code', 'code', 'name']],
         regions[['region_code', 'name_reg']],
@@ -51,7 +51,6 @@ def merge_regions_and_departments(regions, departments):
     return regions_and_departments
 
 
-merge_regions_and_departments(load_data()[1], load_data()[2])
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -65,9 +64,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     referendum.columns = ['Department code', 'Department name',
                           'Town code', 'Town name', 'Registered',
                           'Abstentions', 'Null', 'Choice A', 'Choice B']
-    
+
     referendum_and_areas = pd.merge(referendum, regions_and_departments,
-                                    left_on='Department code', right_on='code_dep')
+                                    left_on='Department code', 
+                                    right_on='code_dep')
     return referendum_and_areas
 
 
@@ -86,8 +86,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     rename = rename.drop_duplicates()
     print(rename)
     results = pd.concat([results, rename], axis=1)
-    #result_by_regions = pd.merge(referendum_and_areas, results, on='name_reg')
-    return results #result_by_regions
+    result_by_regions = results
+    return result_by_regions
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -95,15 +95,15 @@ def plot_referendum_map(referendum_result_by_regions):
 
         * Load the geographic data with geopandas from `regions.geojson`.
         * Merge these info into `referendum_result_by_regions`.
-        * Use the method `GeoDataFrame.plot` to display the result map. The results
-            should display the rate of 'Choice A' over all expressed ballots.
+        * Use the method `GeoDataFrame.plot` to display the result map.
+            The results should display the rate of 'Choice A' over all expressed ballots.
         * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
         """
         geo_data = gpd.read_file('data/regions.geojson')
         print(geo_data.columns)
         merged_data = geo_data.merge(referendum_result_by_regions,
-                                     left_on='code',
-                                     right_on='code_reg')
+                                                                 left_on='code',
+                                                                 right_on='code_reg')
         merged_data['ratio'] = merged_data['Choice A'] / (
              merged_data['Choice A'] + merged_data['Choice B'])
         merged_data.plot(column='ratio')
