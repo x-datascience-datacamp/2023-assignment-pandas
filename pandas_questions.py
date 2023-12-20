@@ -1,15 +1,13 @@
 """Plotting referendum results in pandas.
 
-In short, we want to make beautiful map to report results of a referendum. In
-some way, we would like to depict results with something similar to the maps
-that you can find here:
-https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/example_map.png
+
 
 To do that, you will load the data as pandas.DataFrame, merge the info and
 aggregate them by regions and finally plot them on a map using `geopandas`.
 """
 import pandas as pd
 import geopandas as gpd
+import pandas as pd
 import matplotlib.pyplot as plt
 
 
@@ -28,9 +26,8 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
-    regions = regions.rename(
-         columns={'code': 'region_code',  'name': 'name_reg'})
+    regions = regions.rename(columns={'code': 'region_code',
+                                      'name': 'name_reg'})
 
     regions_and_departments = pd.merge(
         departments[['region_code', 'code', 'name']],
@@ -39,15 +36,16 @@ def merge_regions_and_departments(regions, departments):
         how='left'
     )
     print(regions_and_departments.columns)
-    regions_and_departments.columns = ['code_reg', 'code_dep', 'name_dep',
-                                       'name_reg']
+    regions_and_departments.columns = ['code_reg',
+                                       'code_dep', 'name_dep', 'name_reg']
     regions_and_departments.insert(1, 'name_reg_new',
                                    regions_and_departments['name_reg'])
     regions_and_departments = regions_and_departments.drop(columns='name_reg')
     regions_and_departments = regions_and_departments.rename(
-         columns={'name_reg_new': 'name_reg'})
-    regions_and_departments.iloc[0:9, 2] = pd.Series(
-         ['1', '2', '3', '4', '5', '6', '7', '8', '9'])
+        columns={'name_reg_new': 'name_reg'})
+    regions_and_departments.iloc[0:9, 2] = pd.Series(['1', '2', '3',
+                                                      '4', '5', '6', '7',
+                                                      '8', '9'])
     return regions_and_departments
 
 
