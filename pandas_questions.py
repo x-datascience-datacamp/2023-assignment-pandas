@@ -55,7 +55,13 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    return pd.DataFrame({})
+    columns = ['code_reg', 'name_reg', 'Registered', 'Abstentions',
+               'Null', 'Choice A', 'Choice B']
+    col_fun = {'name_reg': 'max', 'Registered': 'sum', 'Abstentions': 'sum',
+               'Null': 'sum', 'Choice A': 'sum', 'Choice B': 'sum'}
+    return referendum_and_areas.loc[
+        :, columns
+        ].groupby('code_reg').agg(col_fun)
 
 
 def plot_referendum_map(referendum_result_by_regions):
