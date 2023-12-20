@@ -20,6 +20,7 @@ def load_data():
     departments = pd.read_csv('data/departments.csv')
     return referendum, regions, departments
 
+
 def merge_regions_and_departments(regions, departments):
     """Merge regions and departments in one DataFrame.
 
@@ -37,6 +38,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad, which all have a code that contains `Z`.
     """
+    referendum = referendum.copy()
+    referendum.loc[:, 'Department code'] = referendum['Department code'].str.zfill(2)
     referendum = referendum[~referendum['Department code'].str.startswith('Z')]
     result_df = pd.merge(regions_and_departments, referendum, how='inner', left_on='code_dep', right_on='Department code')
     return result_df 
@@ -61,8 +64,7 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     geo_data = gpd.read_file('data/regions.geojson')
-    referendum_result_by_regions = referendum_result_by_regions.set_index('name_reg')
-    merged_data = geo_data.merge(referendum_result_by_regions, left_on='nom', right_index=True)
+    merged_data = geo_data.merge(referendum_result_by_regions, left_on='nom', right_on='name_reg')
     merged_data['ratio'] = merged_data['Choice A'] / (merged_data['Choice A'] + merged_data['Choice B'])
     merged_data.plot(column='ratio', cmap='viridis', legend=True, figsize=(12, 8))
     plt.title('Referendum Results: Ratio of "Choice A" over all expressed ballots')
