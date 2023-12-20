@@ -22,6 +22,8 @@ def load_data():
 
 
 def convert_code(code):
+    """A function just to convert the digits like 1 to 01 so that they can map
+      when merging two dataframe"""
     if code.isdigit():
         return int(code)
     else:
