@@ -22,7 +22,7 @@ def load_data():
 
 
 def convert_code(code):
-    """A function just to convert digits like 1 to 01 so that they can map"""
+    """A function just to convert digits like 1 to 01 so that they can map."""
     if code.isdigit():
         return int(code)
     else:
