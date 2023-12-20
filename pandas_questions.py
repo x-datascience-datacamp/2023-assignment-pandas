@@ -22,7 +22,7 @@ def load_data():
 
 
 def convert_code(code):
-    """function to convert code"""
+    """Function to convert code."""
     if code.isdigit():
         return int(code)
     else:
