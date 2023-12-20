@@ -99,6 +99,7 @@ def plot_referendum_map(referendum_result_by_regions):
 
 
 if __name__ == "__main__":
+
     referendum, df_reg, df_dep = load_data()
     regions_and_departments = merge_regions_and_departments(
         df_reg, df_dep
