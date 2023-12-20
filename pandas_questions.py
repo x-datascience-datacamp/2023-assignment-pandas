@@ -69,7 +69,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     referendum_and_areas = referendum_and_areas.dropna()
 
     # Select relevant columns
-    ref = referendum_and_areas[['code_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']]
+    ref = referendum_and_areas[['code_reg', 'Registered', 'Abstentions',
+                                'Null', 'Choice A', 'Choice B']]
 
     # Extract 'name_reg' and 'code_reg' for later merging
     x = referendum_and_areas[['name_reg', 'code_reg']]
@@ -77,14 +78,12 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     # Group by 'code_reg', sum the values, and reset the index
     referendum_and_areas = ref.groupby('code_reg').sum().reset_index()
 
-    # Merge with the extracted 'name_reg' and 'code_reg' to get the final DataFrame
     ref = pd.merge(x, referendum_and_areas, on='code_reg')
 
     # Drop duplicates and set 'code_reg' as the index
     merged_df = ref.drop_duplicates().set_index('code_reg')
 
     return merged_df
-
 
 
 def plot_referendum_map(referendum_result_by_regions):
