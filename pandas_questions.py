@@ -31,6 +31,7 @@ def merge_regions_and_departments(regions, departments):
 
     regions = regions.rename(
          columns={'code': 'region_code',  'name': 'name_reg'})
+    
     regions_and_departments = pd.merge(
         departments[['region_code', 'code', 'name']],
         regions[['region_code', 'name_reg']],
