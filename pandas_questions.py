@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    
     referendum = pd.read_csv("data/referendum.csv", sep=";")
     regions = pd.read_csv("data/regions.csv")
     departments = pd.read_csv("data/departments.csv")
@@ -31,8 +30,14 @@ def merge_regions_and_departments(regions, departments):
     """
 
     regions = regions.rename(columns={'code': 'code_reg', 'name': 'name_reg'})
-    departments = departments.rename(columns={'code': 'code_dep', 'name': 'name_dep', 'region_code': 'code_reg'})
-    merged_data = pd.merge(regions, departments, on='code_reg')[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
+    departments = departments.rename(columns={'code': 'code_dep',
+    'name': 'name_dep',
+                                            'region_code': 'code_reg'})
+    merged_data = pd.merge(regions, departments, 
+                           on='code_reg')[['code_reg',
+                                            'name_reg',
+                                            'code_dep',
+                                            'name_dep']]
     return merged_data
 
 
