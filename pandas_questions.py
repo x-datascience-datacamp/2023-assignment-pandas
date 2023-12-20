@@ -60,19 +60,31 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
+
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    referendum_and_areas.dropna()
-    ref = referendum_and_areas[['code_reg', 'Registered', 'Abstentions',
-                                'Null', 'Choice A', 'Choice B']]
+    # Drop NaN values (assuming this is the intention)
+    referendum_and_areas = referendum_and_areas.dropna()
+
+    # Select relevant columns
+    ref = referendum_and_areas[['code_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']]
+
+    # Extract 'name_reg' and 'code_reg' for later merging
     x = referendum_and_areas[['name_reg', 'code_reg']]
-    referendum_and_areas = ref .groupby('code_reg').sum().reset_index()
-    # Create a GeoDataFrame with the computed results
+
+    # Group by 'code_reg', sum the values, and reset the index
+    referendum_and_areas = ref.groupby('code_reg').sum().reset_index()
+
+    # Merge with the extracted 'name_reg' and 'code_reg' to get the final DataFrame
     ref = pd.merge(x, referendum_and_areas, on='code_reg')
+
+    # Drop duplicates and set 'code_reg' as the index
     merged_df = ref.drop_duplicates().set_index('code_reg')
+
     return merged_df
+
 
 
 def plot_referendum_map(referendum_result_by_regions):
