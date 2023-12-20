@@ -48,7 +48,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
     df['Department code'] = (df['Department code'].str.zfill(2))
 
-    df = pd.merge(df, regions_and_departments, left_on='Department code', 
+    df = pd.merge(df, regions_and_departments, left_on='Department code',
                   right_on='code_dep', how='outer')
     df.dropna(inplace=True)
     return df
