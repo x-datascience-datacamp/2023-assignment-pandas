@@ -36,8 +36,6 @@ def merge_regions_and_departments(regions, departments):
     """
     X = pd.merge(regions, departments,  left_on="code", right_on="region_code",
                  how="inner", suffixes=('_reg', '_dep'))
-    # print(X['code_dep'].unique())
-    # print(X.shape)
     return pd.DataFrame(X[['code_reg', 'name_reg', 'code_dep', 'name_dep']])
 
 
@@ -53,7 +51,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
         convert_code)
     regions_and_departments['code_dep'] = regions_and_departments[
         'code_dep'].apply(convert_code)
-    X = pd.merge(referendum, regions_and_departments, 
+    X = pd.merge(referendum, regions_and_departments,
                  left_on="Department code", right_on="code_dep")
     return pd.DataFrame(X)
 
@@ -68,15 +66,12 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     result = referendum_and_areas.groupby('code_reg').agg(
         {'Registered': 'sum', 'Abstentions': 'sum', 'Null': 'sum',
          'Choice A': 'sum', 'Choice B': 'sum'}).reset_index()
-    print(result.info())
     result = pd.merge(result, regions[['code', 'name']], left_on='code_reg',
                       right_on='code', how='inner').set_index('code_reg')
     result = result[['name', 'Registered', 'Abstentions', 'Null', 'Choice A',
                     'Choice B']]
     result.columns = ['name_reg', 'Registered', 'Abstentions', 'Null',
                       'Choice A', 'Choice B']
-    print(result.info())
-    print(result.head())
     return result
 
 
@@ -97,7 +92,7 @@ def plot_referendum_map(referendum_result_by_regions):
     merged_data['ratio'] = merged_data['Choice A'] / (
         merged_data['Choice A'] + merged_data['Choice B'])
     fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-    merged_data.plot(column='ratio', cmap='coolwarm', linewidth=0.8, 
+    merged_data.plot(column='ratio', cmap='coolwarm', linewidth=0.8,
                      ax=ax, edgecolor='0.8', legend=True)
     plt.title('Referendum Results - Choice A Ratio', fontsize=16)
     ax.set_axis_off()
