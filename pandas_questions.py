@@ -65,7 +65,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     referendum['Department code'] = referendum['Department code'].apply(
         lambda x: '0' + x if len(x) == 1 else x
         )
-    
+
     merged = pd.merge(
         left=referendum,
         right=regions_and_departments,
@@ -95,7 +95,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
         ['code_reg', 'name_reg'],
         as_index=False
         ).sum()
-    
+
     referendum_results.set_index(
         'code_reg',
         inplace=True
