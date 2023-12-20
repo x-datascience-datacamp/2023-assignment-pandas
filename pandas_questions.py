@@ -7,7 +7,6 @@ aggregate them by regions and finally plot them on a map using `geopandas`.
 """
 import pandas as pd
 import geopandas as gpd
-import pandas as pd
 import matplotlib.pyplot as plt
 
 
