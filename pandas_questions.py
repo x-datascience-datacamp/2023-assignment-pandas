@@ -29,7 +29,8 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
     regions = regions.rename(columns={'code': 'code_reg', 'name': 'name_reg'})
-    departments = departments.rename(columns={'region_code': 'code_reg', 'name': 'name_dep',
+    departments = departments.rename(columns={'region_code': 'code_reg',
+                                              'name': 'name_dep',
                                               'code': 'code_dep'})
 
     # Effectuer la jointure en utilisant 'code_reg' comme clé
@@ -65,13 +66,13 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     """
 
     referendum_and_areas.dropna()
-    ref = referendum_and_areas[['code_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']]
+    ref = referendum_and_areas[['code_reg', 'Registered', 'Abstentions',
+                                'Null', 'Choice A', 'Choice B']]
     x = referendum_and_areas[['name_reg', 'code_reg']]
     referendum_and_areas = ref .groupby('code_reg').sum().reset_index()
     # Create a GeoDataFrame with the computed results
     ref = pd.merge(x, referendum_and_areas, on='code_reg')
     merged_df = ref.drop_duplicates().set_index('code_reg')
-    
     return merged_df
 
 
@@ -84,8 +85,17 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
-    return gpd.GeoDataFrame({})
+    # Charger les données géographiques
+    regions_geo = gpd.read_file('data/regions.geojson')
+    # Fusionner les informations dans referendum_result_by_regions
+    merged = pd.merge(regions_geo, referendum_result_by_regions,
+                      left_on='code', right_index=True)
+    merged['ratio'] = merged['Choice A'] / (
+        merged['Choice A'] + merged['Choice B'])
+    fig, ax = plt.subplots(1, 1)
+    merged.plot(column='ratio', ax=ax, legend=True, cmap='coolwarm')
+    plt.show()
+    return merged
 
 
 if __name__ == "__main__":
