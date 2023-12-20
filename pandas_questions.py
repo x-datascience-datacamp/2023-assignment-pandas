@@ -29,20 +29,24 @@ def merge_regions_and_departments(regions, departments):
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
 
-    return (
-        departments
-        .rename(columns={"region_code": "code_reg",
-                         "code": "code_dep",
-                         "name": "name_dep"}
-                )[["code_reg", "code_dep", "name_dep"]]
-        .merge(regions
-               .rename(columns={"code": "code_reg",
-                                "name": "name_reg"}
-                       )[["code_reg", "name_reg"]],
-               on="code_reg",
-               how="left",
-               validate="m:1")
-    )
+    departments_renamed = (
+        departments.rename(columns={"region_code": "code_reg",
+                                    "code": "code_dep",
+                                    "name": "name_dep"})
+        [["code_reg", "code_dep", "name_dep"]])
+
+    regions_renamed = (
+        regions.rename(columns={"code": "code_reg",
+                                "name": "name_reg"})
+        [["code_reg", "name_reg"]])
+
+    regions_and_departments = (
+        departments_renamed.merge(regions_renamed,
+                                  on="code_reg",
+                                  how="left",
+                                  validate="m:1"))
+
+    return regions_and_departments
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -61,12 +65,14 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     referendum["Department code"] = referendum["Department code"]\
         .apply(lambda x: str(0) + str(x) if len(x) == 1 else str(x))
 
-    return (regions_and_departments
-            .merge(referendum,
-                   left_on="code_dep",
-                   right_on="Department code",
-                   how="inner",
-                   validate="1:m"))
+    referendum_and_areas = (
+        regions_and_departments.merge(referendum,
+                                      left_on="code_dep",
+                                      right_on="Department code",
+                                      how="inner",
+                                      validate="1:m"))
+
+    return referendum_and_areas
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -76,7 +82,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    return (
+    referendum_results_by_region = (
         referendum_and_areas
         .groupby(by=["code_reg", "name_reg"], as_index=False)
         .sum()
@@ -86,8 +92,9 @@ def compute_referendum_result_by_regions(referendum_and_areas):
           "Abstentions",
           "Null",
           "Choice A",
-          "Choice B"]]
-    )
+          "Choice B"]])
+
+    return referendum_results_by_region
 
 
 def plot_referendum_map(referendum_result_by_regions):
