@@ -16,15 +16,15 @@ import matplotlib.pyplot as plt
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv(
-        filepath_or_buffer="/home/vivek/OneDrive/2023-2024/data_camp/2023-assignment-pandas/data/referendum.csv",
+        filepath_or_buffer="data/referendum.csv",
         sep=";"
     )
     regions = pd.read_csv(
-        filepath_or_buffer="/home/vivek/OneDrive/2023-2024/data_camp/2023-assignment-pandas/data/regions.csv",
+        filepath_or_buffer="data/regions.csv",
         sep=","
     )
     departments = pd.read_csv(
-        filepath_or_buffer="/home/vivek/OneDrive/2023-2024/data_camp/2023-assignment-pandas/data/departments.csv",
+        filepath_or_buffer="data/departments.csv",
         sep=","
     )
 
