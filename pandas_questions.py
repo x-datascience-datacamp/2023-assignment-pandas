@@ -81,7 +81,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    df = referendum_and_areas.groupby(["code_reg"]).sum()
+    df = referendum_and_areas.groupby(["code_reg","name_reg"]).sum()
     df.reset_index(inplace=True)
     df = df[
         [
