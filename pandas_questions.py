@@ -91,7 +91,7 @@ def compute_referendum_result_by_regions(referendum_and_areas):
             "Abstentions",
             "Null",
             "Choice A",
-            "Choice B"
+            "Choice B",
         ]
     ]
     df.set_index("code_reg", inplace=True)
