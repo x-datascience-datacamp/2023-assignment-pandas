@@ -1,3 +1,5 @@
+
+
 """Plotting referendum results in pandas.
 
 In short, we want to make beautiful map to report results of a referendum. In
@@ -15,12 +17,12 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    ref_path="C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\referendum.csv"
-    reg_path="C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\regions.csv"
-    depart_path="C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\departments.csv"
+    ref_path = "C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\referendum.csv"
+    reg_path = "C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\regions.csv"
+    dep_path = "C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\departments.csv"
     referendum =  pd.DataFrame(pd.read_csv(ref_path, sep=";"))
     regions = pd.DataFrame(pd.read_csv(reg_path))
-    departments = pd.DataFrame(pd.read_csv(depart_path))
+    departments = pd.DataFrame(pd.read_csv(dep_path))
     return referendum,regions,departments
 
 
@@ -49,10 +51,10 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     referendum['Department code'] = referendum['Department code'].apply(lambda x: '{0:0>2}'.format(x))  
     new_merged_df = pd.merge(referendum, 
-                    regions_and_departments,
-                    left_on='Department code',
-                    right_on='code_dep', 
-                    how='left')
+                             regions_and_departments, 
+                             left_on='Department code', 
+                             right_on='code_dep', 
+                             how='left')
     new_merged_df = new_merged_df.dropna()
     new_merged_df = new_merged_df[~new_merged_df['code_reg'].isin(['COM', 'TOM', 'DOM'])]
     new_merged_df = new_merged_df[new_merged_df["Department name"] != "FRANCAIS DE L'ETRANGER"]
