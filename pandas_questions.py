@@ -96,11 +96,10 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     gj = gpd.read_file('data/regions.geojson')
-    both = pd.merge(referendum_result_by_regions,
-                    gj,
-                    how='left',
-                    left_on='code_reg',
-                    right_on='code')
+    both = pd.merge(gj, 
+                    referendum_result_by_regions,
+                    right_on='code_reg',
+                    left_on='code')
     both['ratio'] = both['Choice A']/(both['Choice A'] + both['Choice B'])
     both.plot(column='ratio', legend=True)
     return both
