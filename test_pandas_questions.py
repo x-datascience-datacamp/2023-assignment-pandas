@@ -12,13 +12,13 @@ from pandas_questions import compute_referendum_result_by_regions
 def test_load_data():
     referendum, regions, departments = load_data()
 
-    df_ref = pd.read_csv('data/referendum.csv', sep=';')
+    df_ref = pd.read_csv('C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\referendum.csv', sep=';')
     assert set(referendum.columns) == set(df_ref.columns)
 
-    df_reg = pd.read_csv('data/regions.csv')
+    df_reg = pd.read_csv('C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\regions.csv')
     assert set(regions.columns) == set(df_reg.columns)
 
-    df_dep = pd.read_csv('data/departments.csv')
+    df_dep = pd.read_csv('C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\departments.csv')
     assert set(departments.columns) == set(df_dep.columns)
 
 
