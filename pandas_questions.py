@@ -44,7 +44,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
     # Correctly formatting the code_dep column : 1 --> 01 as in
     # regions_and_departments.
     referendum["Department code"] = referendum["Department code"].apply(
