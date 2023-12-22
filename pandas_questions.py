@@ -1,3 +1,5 @@
+
+
 """Plotting referendum results in pandas.
 
 In short, we want to make beautiful map to report results of a referendum. In
@@ -15,10 +17,12 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
-
+    ref_path = "C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\referendum.csv"
+    reg_path = "C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\regions.csv"
+    dep_path = "C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\departments.csv"
+    referendum =  pd.DataFrame(pd.read_csv(ref_path, sep=";"))
+    regions = pd.DataFrame(pd.read_csv(reg_path))
+    departments = pd.DataFrame(pd.read_csv(dep_path))
     return referendum, regions, departments
 
 
@@ -28,8 +32,17 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-
-    return pd.DataFrame({})
+    regions = regions.rename(columns= {'code': 'code_reg', 
+                                       'name' : 'name_reg'})
+    departments = departments.rename(columns= {'code': 'code_dep', 
+                                               'name': 'name_dep'})
+    merged_df = pd.merge(regions, 
+                         departments, 
+                         left_on='code_reg', 
+                         right_on='region_code', 
+                         how='left')
+    merged_df = merged_df[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
+    return merged_df
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -38,8 +51,16 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
-
-    return pd.DataFrame({})
+    referendum['Department code'] = referendum['Department code'].apply(lambda x: '{0:0>2}'.format(x))  
+    new_merged_df = pd.merge(referendum, 
+                             regions_and_departments, 
+                             left_on='Department code', 
+                             right_on='code_dep', 
+                             how='left')
+    new_merged_df = new_merged_df.dropna()
+    new_merged_df = new_merged_df[~new_merged_df['code_reg'].isin(['COM', 'TOM', 'DOM'])]
+    new_merged_df = new_merged_df[new_merged_df["Department name"] != "FRANCAIS DE L'ETRANGER"]
+    return new_merged_df
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -48,8 +69,15 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-
-    return pd.DataFrame({})
+    result = referendum_and_areas.groupby('code_reg').agg({
+        'name_reg': 'first',  
+        'Registered': 'sum',
+        'Abstentions': 'sum',
+        'Null': 'sum',
+        'Choice A': 'sum',
+        'Choice B': 'sum'
+    })
+    return result
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -61,9 +89,21 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
-    return gpd.GeoDataFrame({})
-
+    geodata = gpd.read_file("C:\\Users\\Btissam\\Downloads\\data_camp\\2023-assignment-pandas\\regions.geojson")
+    referendum_result_by_regions = pd.merge(
+        geodata,
+        referendum_result_by_regions,
+        left_on="code",
+        right_on="code_reg"
+    )
+    numerator = referendum_result_by_regions['Choice A']
+    denominator = (
+        referendum_result_by_regions['Choice A'] +
+        referendum_result_by_regions['Choice B']
+    )
+    referendum_result_by_regions['ratio'] = numerator / denominator
+    referendum_result_by_regions.plot(column='ratio')
+    return referendum_result_by_regions
 
 if __name__ == "__main__":
 
