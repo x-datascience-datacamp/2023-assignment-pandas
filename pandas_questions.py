@@ -98,9 +98,11 @@ def plot_referendum_map(referendum_result_by_regions):
     new_gdf['ratio'] = new_gdf['Choice A']/(
         new_gdf["Choice A"] + new_gdf["Choice B"]
         )
-    new_gdf.plot('ratio', cmap="viridis", legend=True,legend_kwds={"label": "Ration of Choice A ", "orientation": "vertical"})
+    new_gdf.plot('ratio', cmap="viridis", legend=True, legend_kwds={
+        "label": "Ration of Choice A ", "orientation": "vertical"
+        }
+        )
     return new_gdf
-    
 
 
 if __name__ == "__main__":
