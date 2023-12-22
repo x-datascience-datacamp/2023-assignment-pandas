@@ -65,19 +65,18 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    referendum_and_areas = referendum_and_areas.groupby('name_\
-                                                    reg').sum()[['Registered', 
-                                                                 'Abstentions', 
-                                                                 'Null', 
-                                                                'Choice A', 
-                                                                'Choice B']]
-    referendum_and_areas.reset_index()
-    return referendum_and_areas.reset_index()
+    referendum_and_areas = (
+        referendum_and_areas.groupby('name_reg')
+        .sum()[['Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']]
+    )
+    referendum_and_areas.reset_index(inplace=True)
+
+    return referendum_and_areas
 
 
 def plot_referendum_map(referendum_result_by_regions):
     """Plot a map with the results from the referendum.
-    * Load the geographic data with geopandas from 
+    * Load the geographic data with geopandas from
     *`regions.geojson`.
     * Merge these info into `referendum_result_by_regions`.
     * Use the method `GeoDataFrame.plot` to display the result map. The results
@@ -97,7 +96,6 @@ def plot_referendum_map(referendum_result_by_regions):
     return regions_geo
 
 
-
 if __name__ == "__main__":
 
     referendum, df_reg, df_dep = load_data()
@@ -114,4 +112,3 @@ if __name__ == "__main__":
 
     plot_referendum_map(referendum_results)
     plt.show()
-
