@@ -6,7 +6,7 @@ that you can find here:
 https://github.com/x-datascience-datacamp/datacamp-assignment-pandas/blob/main/example_map.png
 
 To do that, you will load the data as pandas.DataFrame, merge the info and
-aggregate them by regions and finally plot them on a map using geopandas.
+aggregate them by regions and finally plot them on a map using `geopandas`.
 """
 import pandas as pd
 import geopandas as gpd
@@ -65,7 +65,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 def compute_referendum_result_by_regions(referendum_and_areas):
     """Return a table with the absolute count for each region.
 
-    The return DataFrame should be indexed by code_reg and have columns:
+    The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
     grouped = referendum_and_areas.groupby('code_reg')
@@ -89,9 +89,9 @@ def compute_referendum_result_by_regions(referendum_and_areas):
 def plot_referendum_map(referendum_result_by_regions):
     """Plot a map with the results from the referendum.
 
-    * Load the geographic data with geopandas from regions.geojson.
-    * Merge these info into referendum_result_by_regions.
-    * Use the method GeoDataFrame.plot to display the result map. The results
+    * Load the geographic data with geopandas from `regions.geojson`.
+    * Merge these info into `referendum_result_by_regions`.
+    * Use the method `GeoDataFrame.plot` to display the result map. The results
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
@@ -116,7 +116,7 @@ def plot_referendum_map(referendum_result_by_regions):
     return merged
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
 
     referendum, df_reg, df_dep = load_data()
     regions_and_departments = merge_regions_and_departments(
@@ -132,4 +132,3 @@ if _name_ == "_main_":
 
     plot_referendum_map(referendum_results)
     plt.show()
-    
