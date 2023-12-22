@@ -14,12 +14,16 @@ import matplotlib.pyplot as plt
 
 
 def load_data():
-    """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
-
+    """Charge les données à partir des fichiers CSV pour le référendum, les régions et les départements."""
+    referendum = pd.read_csv('data/referendum.csv', sep = ';')
+    regions = pd.read_csv('data/regions.csv', sep = ',')
+    departments = pd.read_csv('data/departments.csv', sep = ',')
+    
     return referendum, regions, departments
+
+referendum, regions, departments = load_data()
+
+
 
 
 def merge_regions_and_departments(regions, departments):
@@ -28,8 +32,24 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
+    #Rename regions
 
-    return pd.DataFrame({})
+    regions = regions.drop(columns = ['slug','id'])
+    regions = regions.rename(columns = {'name':'name_reg'})
+    regions = regions.rename(columns = {'code':'code_reg'})
+
+    #Rename departments
+
+    departments = departments.drop(columns = ['slug','id'])
+    departments = departments.rename(columns = {'name':'name_dep'})
+    departments = departments.rename(columns = {'code':'code_dep'})
+    departments = departments.rename(columns = {'region_code':'code_reg'})
+
+    #mERGE
+    
+    RegDep = regions.merge(departments, on = 'code_reg', how = 'left')
+
+    return RegDep
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -38,8 +58,13 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    referendum = referendum.rename(columns = {'Department code':'code_dep'})
+    referendum = referendum.rename(columns = {'Department name':'name_dep'})
 
-    return pd.DataFrame({})
+    MergeRRD = regions_and_departments.merge(referendum, on = 'code_dep')
+
+
+    return MergeRRD
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -49,8 +74,15 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
 
-    return pd.DataFrame({})
+    Somme_reg = referendum_and_areas.groupby(by="name_reg").sum()
+    Somme_reg = Somme_reg.drop(columns = 'Town code')
 
+
+    return Somme_reg
+
+
+import geodatasets
+import geopandas
 
 def plot_referendum_map(referendum_result_by_regions):
     """Plot a map with the results from the referendum.
@@ -61,8 +93,11 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-
-    return gpd.GeoDataFrame({})
+    France = geopandas.read_file("data/regions.geojson")
+    France = France.rename(columns = {'nom': 'name_reg'})
+    Mergemaps = France.merge(referendum_result_by_regions, on = 'name_reg')
+    
+    return Mergemaps.plot(column="Choice A", legend=True)
 
 
 if __name__ == "__main__":
