@@ -17,7 +17,7 @@ def load_data():
     """Load data from the CSV files referundum/regions/departments."""
     referendum = pd.read_csv("data/referendum.csv", sep=";")
     regions = pd.read_csv("data/regions.csv", sep=",")
-    departments = pd.read_csv("data/departments.csv", sep=",") 
+    departments = pd.read_csv("data/departments.csv", sep=",")
     return referendum, regions, departments
 
 
@@ -51,7 +51,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     """
     referendum['Department code'] = referendum['Department code']\
         .apply(lambda x: '0'+x if len(x) == 1 else x)
-                        
     return pd.merge(
         left=referendum,
         right=regions_and_departments,
