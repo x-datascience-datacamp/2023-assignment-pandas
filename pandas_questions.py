@@ -62,24 +62,24 @@ def compute_referendum_result_by_regions(r_a_a):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    r_r_b_r = r_a_a.groupby(by='code_reg')[['code_reg',
-                                            'Registered',
-                                            'Abstentions',
-                                            'Null',
-                                            'Choice A',
-                                            'Choice B']
-                                           ].sum().reset_index()
-    r_r_b_r['name_reg'] = r_a_a['name_reg'].unique()
-    r_r_b_r = r_r_b_r.loc[
-        :,
-        ['code_reg',
-         'name_reg',
-         'Registered',
-         'Abstentions',
-         'Null',
-         'Choice A',
-         'Choice B']
-    ]
+    r_r_b_r = r_a_a.groupby(by=['code_reg',
+                                'name_reg']).agg({"Registered": "sum",
+                                                  "Abstentions": "sum",
+                                                  "Null": "sum",
+                                                  "Choice A": "sum",
+                                                  "Choice B": "sum"}
+                                                 ).reset_index()
+    # r_r_b_r['name_reg'] = r_a_a['name_reg'].unique()
+    # r_r_b_r = r_r_b_r.loc[
+    #     :,
+    #     ['code_reg',
+    #      'name_reg',
+    #      'Registered',
+    #      'Abstentions',
+    #      'Null',
+    #      'Choice A',
+    #      'Choice B']
+    # ]
     r_r_b_r = r_r_b_r.set_index('code_reg')
     return r_r_b_r
 
