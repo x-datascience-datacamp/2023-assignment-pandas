@@ -25,10 +25,10 @@ def load_data():
 
 
 def merge_regions_and_departments(regions, departments):
-    """Merge referendum and regions_and_departments in one DataFrame.
+    """Merge regions and departments in one DataFrame.
 
-    You can drop the lines relative to DOM-TOM-COM departments, and the
-    french living abroad.
+    The columns in the final DataFrame should be:
+    ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
     reg = regions.rename(
         columns={"code": "code_reg", "name": "name_reg", "slug": "slug_reg"}
