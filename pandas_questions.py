@@ -15,9 +15,9 @@ import matplotlib.pyplot as plt
 
 def load_data():
     """Load data from the CSV files referundum/regions/departments."""
-    referendum = pd.DataFrame({})
-    regions = pd.DataFrame({})
-    departments = pd.DataFrame({})
+    referendum = pd.read_csv('data/referendum.csv', sep=';')
+    regions = pd.read_csv('data/regions.csv')
+    departments = pd.read_csv('data/departments.csv')
 
     return referendum, regions, departments
 
@@ -28,8 +28,23 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
+    regions = regions[['code', 'name']]
+    departments = departments[['region_code', 'code', 'name']]
 
-    return pd.DataFrame({})
+    regions.rename(columns={'code': 'code_reg',
+                   'name': 'name_reg'},
+                   inplace=True)
+
+    departments.rename(columns={'region_code': 'code_reg',
+                       'code': 'code_dep', 'name': 'name_dep'},
+                       inplace=True)
+
+    regions_and_departments = pd.merge(departments,
+                                       regions,
+                                       on="code_reg",
+                                       how='left')
+
+    return regions_and_departments
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
@@ -38,8 +53,18 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    referendum = referendum.loc[referendum['Department code'] <= '95', :]
 
-    return pd.DataFrame({})
+    referendum['Department code'] = (referendum['Department code']
+                                     .astype(str).str.zfill(2))
+
+    referendum_and_areas = pd.merge(referendum,
+                                    regions_and_departments,
+                                    left_on=['Department code'],
+                                    right_on=['code_dep'],
+                                    how='left')
+
+    return referendum_and_areas
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
@@ -48,8 +73,18 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
+    ref_results = referendum_and_areas.loc[:, ['code_reg',
+                                               'name_reg',
+                                               'Registered',
+                                               'Abstentions',
+                                               'Null',
+                                               'Choice A',
+                                               'Choice B']]
 
-    return pd.DataFrame({})
+    ref_results = ref_results.groupby(['code_reg', 'name_reg']).sum()
+    ref_results = ref_results.reset_index('name_reg')
+
+    return ref_results
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -61,8 +96,22 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
+    geoData = gpd.read_file('data/regions.geojson')
 
-    return gpd.GeoDataFrame({})
+    geo_ref_results = gpd.GeoDataFrame(pd.merge(referendum_result_by_regions,
+                                                geoData,
+                                                left_on=['code_reg'],
+                                                right_on=['code'],
+                                                how='left')
+                                       )
+
+    geo_ref_results['ratio'] = (geo_ref_results['Choice A'] /
+                                (geo_ref_results['Choice A'] +
+                                 geo_ref_results['Choice B']))
+
+    geo_ref_results.plot(column='ratio')
+
+    return geo_ref_results
 
 
 if __name__ == "__main__":
