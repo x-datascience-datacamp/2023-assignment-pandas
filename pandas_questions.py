@@ -26,7 +26,8 @@ def merge_regions_and_departments(regions, departments):
     """Merge regions and departments in one DataFrame.
 
     The columns in the final DataFrame should be:
-    ['code_reg', 'name_reg', 'code_dep', 'name_dep']"""
+    ['code_reg', 'name_reg', 'code_dep', 'name_dep']
+    """
     df = pd.merge(regions[['code', 'name']],
                   departments[['region_code', 'code', 'name']],
                   how='left', right_on='region_code', left_on='code',
@@ -35,7 +36,8 @@ def merge_regions_and_departments(regions, departments):
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
-    """Merge referendum and regions_and_departments in one DataFrame.
+    """
+    Merge referendum and regions_and_departments in one DataFrame.
 
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
@@ -52,17 +54,16 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
                                           inplace=True)
     df = referendum.merge(regions_and_departments, left_on='Department code',
                           right_on='code_dep')
-
     return df.dropna()
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
-    """Return a table with the absolute count for each region.
+    """
+    Return a table with the absolute count for each region.
 
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-
     b = referendum_and_areas.set_index('code_reg')
     b = b[['name_reg', 'Registered', 'Abstentions', 'Null',
            'Choice A', 'Choice B']]
@@ -71,7 +72,8 @@ def compute_referendum_result_by_regions(referendum_and_areas):
 
 
 def plot_referendum_map(referendum_result_by_regions):
-    """Plot a map with the results from the referendum.
+    """
+    Plot a map with the results from the referendum.
 
     * Load the geographic data with geopandas from `regions.geojson`.
     * Merge these info into `referendum_result_by_regions`.
