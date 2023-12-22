@@ -105,7 +105,7 @@ def plot_referendum_map(referendum_result_by_regions):
 
     df.plot(column="ratio", legend=True)
 
-    return gpd.GeoDataFrame({})
+    return df
 
 
 if __name__ == "__main__":
