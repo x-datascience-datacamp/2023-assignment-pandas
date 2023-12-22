@@ -50,6 +50,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
+    referendum["Department code"] = referendum["Department code"].str.zfill(2)
     new_df = referendum.merge(
         regions_and_departments,
         left_on=["Department code"],
@@ -58,7 +59,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     )
     new_df = new_df[new_df["code_reg"] != "COM"]
     new_df = new_df[new_df["Department name"] != "FRANCAIS DE L'ETRANGER"]
-
+    
     return new_df
 
 
@@ -83,10 +84,12 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     gdf = gpd.read_file("data/regions.geojson")
+    
     new_df = referendum_result_by_regions.merge(
         gdf, left_on=["name_reg"], right_on=["nom"], how="inner"
     )
     new_df["ratio"] = new_df["Choice A"] / new_df["Registered"]
+    
     new_gdf = gpd.GeoDataFrame(
         new_df["ratio"], geometry=new_df["geometry"], crs=gdf.crs
     )
@@ -97,7 +100,9 @@ def plot_referendum_map(referendum_result_by_regions):
         legend_kwds={
             "label": "Ration of Choice A ", "orientation": "vertical"},
     )
+
     return new_gdf
+
 
 
 if __name__ == "__main__":
@@ -112,5 +117,5 @@ if __name__ == "__main__":
         )
     print(referendum_results)
 
-    plot_referendum_map(referendum_results)
+    pl=plot_referendum_map(referendum_results)
     plt.show()
