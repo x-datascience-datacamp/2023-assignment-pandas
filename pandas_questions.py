@@ -59,7 +59,6 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     )
     new_df = new_df[new_df["code_reg"] != "COM"]
     new_df = new_df[new_df["Department name"] != "FRANCAIS DE L'ETRANGER"]
-
     return new_df
 
 
@@ -69,9 +68,12 @@ def compute_referendum_result_by_regions(referendum_and_areas):
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
     """
-    df = referendum_and_areas.groupby(["name_reg"]).sum()
-    df = df.drop("Town code", axis=1)
-    return df.reset_index()
+    result = referendum_and_areas.groupby(
+        ["code_reg", "name_reg"], as_index=True
+    ).sum()[["Registered", "Abstentions", "Null", "Choice A", "Choice B"]]
+    result = result.reset_index()
+    result = result.set_index("code_reg")
+    return result
 
 
 def plot_referendum_map(referendum_result_by_regions):
@@ -83,25 +85,19 @@ def plot_referendum_map(referendum_result_by_regions):
       should display the rate of 'Choice A' over all expressed ballots.
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
-    gdf = gpd.read_file("data/regions.geojson")
-
-    new_df = referendum_result_by_regions.merge(
-        gdf, left_on=["name_reg"], right_on=["nom"], how="inner"
+    geo_data = gpd.read_file("data/regions.geojson")
+    geo_data = geo_data.rename(columns={"code": "code_reg"})
+    new_df = pd.merge(referendum_result_by_regions, geo_data, on="code_reg").set_index(
+        "code_reg"
     )
-    new_df["ratio"] = new_df["Choice A"] / new_df["Registered"]
-
-    new_gdf = gpd.GeoDataFrame(
-        new_df["ratio"], geometry=new_df["geometry"], crs=gdf.crs
-    )
+    new_gdf = gpd.GeoDataFrame(data=new_df)
+    new_gdf["ratio"] = new_gdf["Choice A"] / (new_gdf["Choice A"] + new_gdf["Choice B"])
     new_gdf.plot(
-        column="ratio",
+        "ratio",
         cmap="viridis",
         legend=True,
-        legend_kwds={
-            "label": "Ration of Choice A ", "orientation": "vertical"
-            },
+        legend_kwds={"label": "Ration of Choice A ", "orientation": "vertical"},
     )
-
     return new_gdf
 
 
@@ -112,10 +108,7 @@ if __name__ == "__main__":
     referendum_and_areas = merge_referendum_and_areas(
         referendum, regions_and_departments
     )
-    referendum_results = compute_referendum_result_by_regions(
-        referendum_and_areas
-        )
+    referendum_results = compute_referendum_result_by_regions(referendum_and_areas)
     print(referendum_results)
-
-    pl = plot_referendum_map(referendum_results)
+    plot_referendum_map(referendum_results)
     plt.show()
