@@ -21,7 +21,9 @@ data_folder_path = os.path.join(current_dir, 'data')
 
 
 def load_data():
-    """Load data from the CSV files referundum/regions/departments."""
+    """
+    Load data from the CSV files referundum/regions/departments.
+    """
     referendum = pd.read_csv(os.path.join(data_folder_path, 'referendum.csv'),
                              on_bad_lines='skip', sep=';')
     regions = pd.read_csv(os.path.join(data_folder_path, 'regions.csv'),
@@ -32,7 +34,8 @@ def load_data():
 
 
 def merge_regions_and_departments(regions, departments):
-    """Merge regions and departments in one DataFrame.
+    """
+    Merge regions and departments in one DataFrame.
 
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
@@ -51,7 +54,9 @@ def merge_regions_and_departments(regions, departments):
 
 
 def merge_referendum_and_areas(referendum, regions_and_departments):
-    """Merge referendum and regions_and_departments in one DataFrame.
+    """
+    Merge referendum and regions_and_departments in one DataFrame.
+
     You can drop the lines relative to DOM-TOM-COM departments, and the
     french living abroad.
     """
@@ -72,7 +77,8 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
 
 
 def compute_referendum_result_by_regions(referendum_and_areas):
-    """Return a table with the absolute count for each region.
+    """
+    Return a table with the absolute count for each region.
 
     The return DataFrame should be indexed by `code_reg` and have columns:
     ['name_reg', 'Registered', 'Abstentions', 'Null', 'Choice A', 'Choice B']
