@@ -30,10 +30,8 @@ def merge_regions_and_departments(regions, departments):
     """
     r = regions.rename(columns={'code': 'code_reg', 'name': 'name_reg'})
     d = departments.rename(
-        columns={'region_code': 'code_reg', 'code': 'code_dep'}
-        )
-    d = departments.rename(
-        columns={'name': 'name_dep'}
+        columns={'region_code': 'code_reg',
+                 'code': 'code_dep','name': 'name_dep'}
         )
     bd = pd.merge(r, d, on="code_reg")
     bd = bd[['code_reg', 'name_reg', 'code_dep', 'name_dep']]
@@ -94,9 +92,9 @@ def plot_referendum_map(referendum_result_by_regions):
     bd = pd.merge(geo_data, referendum_result_by_regions,
                   left_on="code", right_on="code_reg")
     # Calculation of the rate of "Choice A"
-    bd["rate"] = bd["Choice A"] / (bd["Choice A"] + bd["Choice B"])
+    bd["ratio"] = bd["Choice A"] / (bd["Choice A"] + bd["Choice B"])
     # Generate plot of the result.
-    bd.plot(column="rate", legend=True)
+    bd.plot(column="ratio", legend=True)
     return bd
 
 
