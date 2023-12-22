@@ -23,7 +23,7 @@ def load_data():
     referendum =  pd.DataFrame(pd.read_csv(ref_path, sep=";"))
     regions = pd.DataFrame(pd.read_csv(reg_path))
     departments = pd.DataFrame(pd.read_csv(dep_path))
-    return referendum,regions,departments
+    return referendum, regions, departments
 
 
 def merge_regions_and_departments(regions, departments):
@@ -32,8 +32,10 @@ def merge_regions_and_departments(regions, departments):
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
-    regions = regions.rename(columns = {'code':'code_reg', 'name' : 'name_reg'})
-    departments = departments.rename(columns = {'code': 'code_dep', 'name': 'name_dep'})
+    regions = regions.rename(columns= {'code': 'code_reg', 
+                                       'name' : 'name_reg'})
+    departments = departments.rename(columns= {'code': 'code_dep', 
+                                               'name': 'name_dep'})
     merged_df = pd.merge(regions, 
                          departments, 
                          left_on='code_reg', 
