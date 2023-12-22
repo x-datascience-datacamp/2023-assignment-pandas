@@ -26,7 +26,6 @@ def load_data():
 
 def merge_regions_and_departments(regions, departments):
     """Merge regions and departments in one DataFrame.
-    
     The columns in the final DataFrame should be:
     ['code_reg', 'name_reg', 'code_dep', 'name_dep']
     """
@@ -59,7 +58,7 @@ def merge_referendum_and_areas(referendum, regions_and_departments):
     )
     new_df = new_df[new_df["code_reg"] != "COM"]
     new_df = new_df[new_df["Department name"] != "FRANCAIS DE L'ETRANGER"]
-    
+
     return new_df
 
 
@@ -84,12 +83,12 @@ def plot_referendum_map(referendum_result_by_regions):
     * Return a gpd.GeoDataFrame with a column 'ratio' containing the results.
     """
     gdf = gpd.read_file("data/regions.geojson")
-    
+
     new_df = referendum_result_by_regions.merge(
         gdf, left_on=["name_reg"], right_on=["nom"], how="inner"
     )
     new_df["ratio"] = new_df["Choice A"] / new_df["Registered"]
-    
+
     new_gdf = gpd.GeoDataFrame(
         new_df["ratio"], geometry=new_df["geometry"], crs=gdf.crs
     )
@@ -98,11 +97,11 @@ def plot_referendum_map(referendum_result_by_regions):
         cmap="viridis",
         legend=True,
         legend_kwds={
-            "label": "Ration of Choice A ", "orientation": "vertical"},
+            "label": "Ration of Choice A ", "orientation": "vertical"
+            },
     )
 
     return new_gdf
-
 
 
 if __name__ == "__main__":
@@ -117,5 +116,5 @@ if __name__ == "__main__":
         )
     print(referendum_results)
 
-    pl=plot_referendum_map(referendum_results)
+    pl = plot_referendum_map(referendum_results)
     plt.show()
